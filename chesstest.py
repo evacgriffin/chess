@@ -4,8 +4,8 @@ import unittest
 from chess import Chess
 
 
-class TestChessVar(unittest.TestCase):
-    """Contains unit tests for the ChessVar class"""
+class TestChess(unittest.TestCase):
+    """Contains unit tests for the Chess class"""
     def test_basic_make_move(self):
         """Test basic functionality of the make_move() method."""
         game = Chess()
