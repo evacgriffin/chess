@@ -1,6 +1,6 @@
 # Author:           Eva Griffin
 # GitHub username:  evacgriffin
-# Description:      This project is an implementation of the falcon-hunter chess variant.
+# Description:      This project is a console-based implementation of the falcon-hunter chess variant.
 #
 #                   Special rules: There is no check or checkmate, no castling, no en passant, no pawn promotion.
 #                   If a player's king is captured, the game ends, and that player loses.
