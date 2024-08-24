@@ -4,11 +4,7 @@
 # Board, Player, and Chess classes
 
 from abc import ABC, abstractmethod
-import typing
 from typing import Optional
-
-# Forward declare Board class to use for type hinting
-BoardType = typing.NewType("Board", None)
 
 
 class ChessPiece(ABC):
@@ -47,7 +43,7 @@ class ChessPiece(ABC):
         return self._label
 
     @abstractmethod
-    def move_legal(self, start_square: str, goal_square: str, board: BoardType) -> bool:
+    def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the piece's moveset and current state of the game board.
         :param start_square: the start position as a string
@@ -58,154 +54,6 @@ class ChessPiece(ABC):
                     True if move is legal
         """
         pass
-
-    def diagonal_move_requires_jump(self, start_square: str, goal_square: str, board: BoardType) -> bool:
-        """
-        Checks whether other pieces are in the way of a proposed diagonal move (if a move requires a jump).
-        :param start_square: the start position as a string
-        :param goal_square: the goal position as a string
-        :param board: the game's board as a Board object
-        :return:    Boolean:
-                    True if the move requires a jump
-                    False if move doesn't require a jump
-        """
-        start_column = start_square[0]
-        start_row = int(start_square[1])
-        goal_column = goal_square[0]
-        goal_row = int(goal_square[1])
-
-        # Top right direction
-        if goal_row > start_row and goal_column > start_column:
-            current_column = ord(start_square[0]) + 1
-            current_row = int(start_square[1]) + 1
-            while current_row <= 8 or current_column <= ord('h'):
-                current_square = chr(current_column) + str(current_row)
-                # If we reach the goal square, the move did not require any jumps
-                if current_square == goal_square:
-                    return False
-
-                # If we encounter another piece, the move requires a jump
-                if board.get_current_piece_on_square(current_square):
-                    return True
-                current_row += 1
-                current_column += 1
-
-        # Bottom right direction
-        if goal_row < start_row and goal_column > start_column:
-            current_column = ord(start_square[0]) + 1
-            current_row = int(start_square[1]) - 1
-            while current_row >= 1 or current_column <= ord('h'):
-                current_square = chr(current_column) + str(current_row)
-                # If we reach the goal square, the move did not require any jumps
-                if current_square == goal_square:
-                    return False
-
-                # If we encounter another piece, the move requires a jump
-                if board.get_current_piece_on_square(current_square):
-                    return True
-                current_row -= 1
-                current_column += 1
-
-        # Top left direction
-        if goal_row > start_row and goal_column < start_column:
-            current_column = ord(start_square[0]) - 1
-            current_row = int(start_square[1]) + 1
-            while current_row <= 8 or current_column >= ord('a'):
-                current_square = chr(current_column) + str(current_row)
-                # If we reach the goal square, the move did not require any jumps
-                if current_square == goal_square:
-                    return False
-
-                # If we encounter another piece, the move requires a jump
-                if board.get_current_piece_on_square(current_square):
-                    return True
-                current_row += 1
-                current_column -= 1
-
-        # Bottom left direction
-        if goal_row < start_row and goal_column < start_column:
-            current_column = ord(start_square[0]) - 1
-            current_row = int(start_square[1]) - 1
-            while current_row >= 1 or current_column >= ord('a'):
-                current_square = chr(current_column) + str(current_row)
-                # If we reach the goal square, the move did not require any jumps
-                if current_square == goal_square:
-                    return False
-
-                # If we encounter another piece, the move requires a jump
-                if board.get_current_piece_on_square(current_square):
-                    return True
-                current_row -= 1
-                current_column -= 1
-
-    def straight_move_requires_jump(self, start_square: str, goal_square: str, board: BoardType) -> bool:
-        """
-        Checks whether other pieces are in the way of a proposed up/down or left/right move (if a move requires a jump).
-        :param start_square: the start position as a string
-        :param goal_square: the goal position as a string
-        :param board: the game's board as a Board object
-        :return:    Boolean:
-                    True if the move requires a jump
-                    False if move doesn't require a jump
-        """
-        start_column = start_square[0]
-        start_row = int(start_square[1])
-        goal_column = goal_square[0]
-        goal_row = int(goal_square[1])
-
-        # Up direction
-        if goal_row > start_row:
-            current_row = start_row + 1
-            while current_row <= 8:
-                current_square = start_column + str(current_row)
-                # If we reach the goal square, the move did not require any jumps
-                if current_square == goal_square:
-                    return False
-
-                # If we encounter another piece, the move requires a jump
-                if board.get_current_piece_on_square(current_square):
-                    return True
-                current_row += 1
-
-        # Down direction
-        if goal_row < start_row:
-            current_row = start_row - 1
-            while current_row >= 1:
-                current_square = start_column + str(current_row)
-                # If we reach the goal square, the move did not require any jumps
-                if current_square == goal_square:
-                    return False
-                # If we encounter another piece, the move requires a jump
-                if board.get_current_piece_on_square(current_square):
-                    return True
-                current_row -= 1
-
-        # Left direction
-        if goal_column < start_column:
-            current_column = ord(start_column) - 1
-            while current_column >= ord('a'):
-                current_square = chr(current_column) + str(start_row)
-                # If we reach the goal square, the move did not require any jumps
-                if current_square == goal_square:
-                    return False
-
-                # If we encounter another piece, the move requires a jump
-                if board.get_current_piece_on_square(current_square):
-                    return True
-                current_column -= 1
-
-        # Right direction
-        if goal_column > start_column:
-            current_column = ord(start_column) + 1
-            while current_column <= ord('h'):
-                current_square = chr(current_column) + str(start_row)
-                # If we reach the goal square, the move did not require any jumps
-                if current_square == goal_square:
-                    return False
-                # If we encounter another piece, the move requires a jump
-                if board.get_current_piece_on_square(current_square):
-                    return True
-                current_column += 1
 
 
 class Pawn(ChessPiece):
@@ -225,7 +73,7 @@ class Pawn(ChessPiece):
         super().__init__(color, label)
         self._first_move = True  # Whether this is the pawn's first move
 
-    def move_legal(self, start_square: str, goal_square: str, board: BoardType) -> bool:
+    def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the pawn's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
@@ -248,7 +96,7 @@ class Pawn(ChessPiece):
                 print("Pawns cannot move more than 2 spaces forward on their first turn!\n")
                 return False
             # Don't allow jumping over another piece
-            if goal_column == start_column and self.straight_move_requires_jump(start_square, goal_square, board):
+            if goal_column == start_column and straight_move_requires_jump(start_square, goal_square, board):
                 print("Pawns cannot jump over other pieces.\n")
                 return False
 
@@ -307,7 +155,7 @@ class Knight(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square: str, goal_square: str, board: BoardType) -> bool:
+    def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the knight's moveset.
         Knights are allowed to jump over other pieces.
@@ -351,7 +199,7 @@ class Bishop(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square: str, goal_square: str, board: BoardType) -> bool:
+    def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the bishop's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
@@ -373,7 +221,7 @@ class Bishop(ChessPiece):
             return False
 
         # If the proposed move requires a jump, the move is illegal
-        if self.diagonal_move_requires_jump(start_square, goal_square, board):
+        if diagonal_move_requires_jump(start_square, goal_square, board):
             print("Bishops cannot jump over other pieces!\n")
             return False
         else:
@@ -396,7 +244,7 @@ class Rook(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square: str, goal_square: str, board: BoardType) -> bool:
+    def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the rook's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
@@ -418,7 +266,7 @@ class Rook(ChessPiece):
             return False
 
         # If the proposed move requires a jump, the move is illegal
-        if self.straight_move_requires_jump(start_square, goal_square, board):
+        if straight_move_requires_jump(start_square, goal_square, board):
             print("Rooks cannot jump over other pieces!\n")
             return False
         else:
@@ -441,7 +289,7 @@ class Queen(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square: str, goal_square: str, board: BoardType) -> bool:
+    def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the queen's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
@@ -465,13 +313,13 @@ class Queen(ChessPiece):
 
         # If a proposed diagonal move requires a jump, the move is illegal
         if abs(ord(goal_column) - ord(start_column)) == abs(goal_row - start_row):
-            if self.diagonal_move_requires_jump(start_square, goal_square, board):
+            if diagonal_move_requires_jump(start_square, goal_square, board):
                 print("A queen cannot jump over other pieces!\n")
                 return False
 
         # If a proposed straight move requires a jump, the move is illegal
         if ord(goal_column) == ord(start_column) or goal_row == start_row:
-            if self.straight_move_requires_jump(start_square, goal_square, board):
+            if straight_move_requires_jump(start_square, goal_square, board):
                 print("A queen cannot jump over other pieces!\n")
                 return False
         else:
@@ -494,7 +342,7 @@ class King(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square: str, goal_square: str, board: BoardType) -> bool:
+    def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the king's moveset.
         Since a king can only move one space in each direction, we do not have to check for jumps.
@@ -534,7 +382,7 @@ class Falcon(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square: str, goal_square: str, board: BoardType) -> bool:
+    def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the falcon's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
@@ -569,7 +417,7 @@ class Falcon(ChessPiece):
             # If we are trying to move backwards, we must check for jumps in that direction
             if goal_row < start_row:
                 # If a proposed straight move requires a jump, the move is illegal
-                if self.straight_move_requires_jump(start_square, goal_square, board):
+                if straight_move_requires_jump(start_square, goal_square, board):
                     print("A falcon cannot jump over other pieces!\n")
                     return False
                 else:
@@ -578,7 +426,7 @@ class Falcon(ChessPiece):
             # If we are trying to move diagonally, we must check for jumps in that direction
             elif goal_row > start_row:
                 # If a proposed diagonal move requires a jump, the move is illegal
-                if self.diagonal_move_requires_jump(start_square, goal_square, board):
+                if diagonal_move_requires_jump(start_square, goal_square, board):
                     print("A falcon cannot jump over other pieces!\n")
                     return False
                 else:
@@ -599,7 +447,7 @@ class Falcon(ChessPiece):
             # If we are trying to move backwards, we must check for jumps in that direction
             if goal_row > start_row:
                 # If a proposed straight move requires a jump, the move is illegal
-                if self.straight_move_requires_jump(start_square, goal_square, board):
+                if straight_move_requires_jump(start_square, goal_square, board):
                     print("A falcon cannot jump over other pieces!\n")
                     return False
                 else:
@@ -608,7 +456,7 @@ class Falcon(ChessPiece):
             # If we are trying to move diagonally, we must check for jumps in that direction
             elif goal_row < start_row:
                 # If a proposed diagonal move requires a jump, the move is illegal
-                if self.diagonal_move_requires_jump(start_square, goal_square, board):
+                if diagonal_move_requires_jump(start_square, goal_square, board):
                     print("A falcon cannot jump over other pieces!\n")
                     return False
                 else:
@@ -631,7 +479,7 @@ class Hunter(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square: str, goal_square: str, board: BoardType) -> bool:
+    def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the hunter's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
@@ -666,7 +514,7 @@ class Hunter(ChessPiece):
             # If we are trying to move forward, we must check for jumps in that direction
             if goal_row > start_row:
                 # If a proposed straight move requires a jump, the move is illegal
-                if self.straight_move_requires_jump(start_square, goal_square, board):
+                if straight_move_requires_jump(start_square, goal_square, board):
                     print("A hunter cannot jump over other pieces!\n")
                     return False
                 else:
@@ -675,7 +523,7 @@ class Hunter(ChessPiece):
             # If we are trying to move backward, we must check for jumps in that direction
             elif goal_row < start_row:
                 # If a proposed diagonal move requires a jump, the move is illegal
-                if self.diagonal_move_requires_jump(start_square, goal_square, board):
+                if diagonal_move_requires_jump(start_square, goal_square, board):
                     print("A hunter cannot jump over other pieces!\n")
                     return False
                 else:
@@ -696,7 +544,7 @@ class Hunter(ChessPiece):
             # If we are trying to move forward, we must check for jumps in that direction
             if goal_row < start_row:
                 # If a proposed straight move requires a jump, the move is illegal
-                if self.straight_move_requires_jump(start_square, goal_square, board):
+                if straight_move_requires_jump(start_square, goal_square, board):
                     print("A hunter cannot jump over other pieces!\n")
                     return False
                 else:
@@ -705,7 +553,7 @@ class Hunter(ChessPiece):
             # If we are trying to move backward, we must check for jumps in that direction
             elif goal_row > start_row:
                 # If a proposed diagonal move requires a jump, the move is illegal
-                if self.diagonal_move_requires_jump(start_square, goal_square, board):
+                if diagonal_move_requires_jump(start_square, goal_square, board):
                     print("A hunter cannot jump over other pieces!\n")
                     return False
                 else:
@@ -833,6 +681,156 @@ class Board:
                 # Find square and update its value to piece
                 if key == square:
                     row[key] = piece
+
+
+def diagonal_move_requires_jump(start_square: str, goal_square: str, board: Board) -> bool:
+    """
+    Checks whether other pieces are in the way of a proposed diagonal move (if a move requires a jump).
+    :param start_square: the start position as a string
+    :param goal_square: the goal position as a string
+    :param board: the game's board as a Board object
+    :return:    Boolean:
+                True if the move requires a jump
+                False if move doesn't require a jump
+    """
+    start_column = start_square[0]
+    start_row = int(start_square[1])
+    goal_column = goal_square[0]
+    goal_row = int(goal_square[1])
+
+    # Top right direction
+    if goal_row > start_row and goal_column > start_column:
+        current_column = ord(start_square[0]) + 1
+        current_row = int(start_square[1]) + 1
+        while current_row <= 8 or current_column <= ord('h'):
+            current_square = chr(current_column) + str(current_row)
+            # If we reach the goal square, the move did not require any jumps
+            if current_square == goal_square:
+                return False
+
+            # If we encounter another piece, the move requires a jump
+            if board.get_current_piece_on_square(current_square):
+                return True
+            current_row += 1
+            current_column += 1
+
+    # Bottom right direction
+    if goal_row < start_row and goal_column > start_column:
+        current_column = ord(start_square[0]) + 1
+        current_row = int(start_square[1]) - 1
+        while current_row >= 1 or current_column <= ord('h'):
+            current_square = chr(current_column) + str(current_row)
+            # If we reach the goal square, the move did not require any jumps
+            if current_square == goal_square:
+                return False
+
+            # If we encounter another piece, the move requires a jump
+            if board.get_current_piece_on_square(current_square):
+                return True
+            current_row -= 1
+            current_column += 1
+
+    # Top left direction
+    if goal_row > start_row and goal_column < start_column:
+        current_column = ord(start_square[0]) - 1
+        current_row = int(start_square[1]) + 1
+        while current_row <= 8 or current_column >= ord('a'):
+            current_square = chr(current_column) + str(current_row)
+            # If we reach the goal square, the move did not require any jumps
+            if current_square == goal_square:
+                return False
+
+            # If we encounter another piece, the move requires a jump
+            if board.get_current_piece_on_square(current_square):
+                return True
+            current_row += 1
+            current_column -= 1
+
+    # Bottom left direction
+    if goal_row < start_row and goal_column < start_column:
+        current_column = ord(start_square[0]) - 1
+        current_row = int(start_square[1]) - 1
+        while current_row >= 1 or current_column >= ord('a'):
+            current_square = chr(current_column) + str(current_row)
+            # If we reach the goal square, the move did not require any jumps
+            if current_square == goal_square:
+                return False
+
+            # If we encounter another piece, the move requires a jump
+            if board.get_current_piece_on_square(current_square):
+                return True
+            current_row -= 1
+            current_column -= 1
+
+
+def straight_move_requires_jump(start_square: str, goal_square: str, board: Board) -> bool:
+    """
+    Checks whether other pieces are in the way of a proposed up/down or left/right move (if a move requires a jump).
+    :param start_square: the start position as a string
+    :param goal_square: the goal position as a string
+    :param board: the game's board as a Board object
+    :return:    Boolean:
+                True if the move requires a jump
+                False if move doesn't require a jump
+    """
+    start_column = start_square[0]
+    start_row = int(start_square[1])
+    goal_column = goal_square[0]
+    goal_row = int(goal_square[1])
+
+    # Up direction
+    if goal_row > start_row:
+        current_row = start_row + 1
+        while current_row <= 8:
+            current_square = start_column + str(current_row)
+            # If we reach the goal square, the move did not require any jumps
+            if current_square == goal_square:
+                return False
+
+            # If we encounter another piece, the move requires a jump
+            if board.get_current_piece_on_square(current_square):
+                return True
+            current_row += 1
+
+    # Down direction
+    if goal_row < start_row:
+        current_row = start_row - 1
+        while current_row >= 1:
+            current_square = start_column + str(current_row)
+            # If we reach the goal square, the move did not require any jumps
+            if current_square == goal_square:
+                return False
+            # If we encounter another piece, the move requires a jump
+            if board.get_current_piece_on_square(current_square):
+                return True
+            current_row -= 1
+
+    # Left direction
+    if goal_column < start_column:
+        current_column = ord(start_column) - 1
+        while current_column >= ord('a'):
+            current_square = chr(current_column) + str(start_row)
+            # If we reach the goal square, the move did not require any jumps
+            if current_square == goal_square:
+                return False
+
+            # If we encounter another piece, the move requires a jump
+            if board.get_current_piece_on_square(current_square):
+                return True
+            current_column -= 1
+
+    # Right direction
+    if goal_column > start_column:
+        current_column = ord(start_column) + 1
+        while current_column <= ord('h'):
+            current_square = chr(current_column) + str(start_row)
+            # If we reach the goal square, the move did not require any jumps
+            if current_square == goal_square:
+                return False
+            # If we encounter another piece, the move requires a jump
+            if board.get_current_piece_on_square(current_square):
+                return True
+            current_column += 1
 
 
 class Player:
