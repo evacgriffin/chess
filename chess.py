@@ -3,7 +3,7 @@
 # Queen, King, Falcon, and Hunter
 # Board, Player, and Chess classes
 
-class ChessPiece:
+from abc import ABC, abstractmethod
 import typing
 from typing import Optional
 
@@ -11,6 +11,7 @@ from typing import Optional
 BoardType = typing.NewType("Board", None)
 
 
+class ChessPiece(ABC):
     """
     Represents a chess piece with a color and label.
     Responsible for keeping track of a chess piece's team color (black or white) and its label (to distinguish the
@@ -45,7 +46,19 @@ BoardType = typing.NewType("Board", None)
         """
         return self._label
 
-    def diagonal_move_requires_jump(self, start_square, goal_square, board):
+    @abstractmethod
+    def move_legal(self, start_square: str, goal_square: str, board: BoardType) -> bool:
+        """
+        Check if a proposed move is legal according to the piece's moveset and current state of the game board.
+        :param start_square: the start position as a string
+        :param goal_square: the goal position as a string
+        :param board: the game's board as a Board object
+        :return:    Boolean:
+                    False if move is illegal
+                    True if move is legal
+        """
+        pass
+
     def diagonal_move_requires_jump(self, start_square: str, goal_square: str, board: BoardType) -> bool:
         """
         Checks whether other pieces are in the way of a proposed diagonal move (if a move requires a jump).
@@ -294,12 +307,13 @@ class Knight(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square: str, goal_square: str) -> bool:
+    def move_legal(self, start_square: str, goal_square: str, board: BoardType) -> bool:
         """
         Check if a proposed move is legal according to the knight's moveset.
         Knights are allowed to jump over other pieces.
         :param start_square: the start position as a string
         :param goal_square: the goal position as a string
+        :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
                     True if move is legal
@@ -480,12 +494,13 @@ class King(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square: str, goal_square: str) -> bool:
+    def move_legal(self, start_square: str, goal_square: str, board: BoardType) -> bool:
         """
         Check if a proposed move is legal according to the king's moveset.
         Since a king can only move one space in each direction, we do not have to check for jumps.
         :param start_square: the start position as a string
         :param goal_square: the goal position as a string
+        :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
                     True if move is legal
@@ -1001,13 +1016,8 @@ class Chess:
             return False
 
         # Is the proposed move legal for this type of ChessPiece?
-        if piece_on_start_square.get_label().lower() in ['k', 'g']:
-            # Don't need to pass the board if it's a knight or a king
-            if not piece_on_start_square.move_legal(start_square, goal_square):
-                return False
-        else:
-            if not piece_on_start_square.move_legal(start_square, goal_square, self._board):
-                return False
+        if not piece_on_start_square.move_legal(start_square, goal_square, self._board):
+            return False
 
         # Does goal_square contain a piece from the current player?
         piece_on_goal_square = self._board.get_current_piece_on_square(goal_square)
