@@ -4,17 +4,24 @@
 # Board, Player, and Chess classes
 
 class ChessPiece:
+import typing
+from typing import Optional
+
+# Forward declare Board class to use for type hinting
+BoardType = typing.NewType("Board", None)
+
+
     """
     Represents a chess piece with a color and label.
     Responsible for keeping track of a chess piece's team color (black or white) and its label (to distinguish the
     type of chess piece).
     Has various child classes for each type of chess piece.
     """
-    def __init__(self, color, label):
+    def __init__(self, color: str, label: str) -> None:
         """
         Creates a new ChessPiece object with the specified color and label.
         :param color: 'black' or 'white' as a string
-        :param label: piece label as a lowercase char
+        :param label: piece label as a lowercase character
         """
         self._color = color
 
@@ -24,14 +31,14 @@ class ChessPiece:
         else:
             self._label = label
 
-    def get_color(self):
+    def get_color(self) -> str:
         """
         Returns the chess piece's color.
         :return: color as a string, 'white' or 'black'
         """
         return self._color
 
-    def get_label(self):
+    def get_label(self) -> str:
         """
         Returns the chess piece's label.
         :return: Label as a char
@@ -39,6 +46,7 @@ class ChessPiece:
         return self._label
 
     def diagonal_move_requires_jump(self, start_square, goal_square, board):
+    def diagonal_move_requires_jump(self, start_square: str, goal_square: str, board: BoardType) -> bool:
         """
         Checks whether other pieces are in the way of a proposed diagonal move (if a move requires a jump).
         :param start_square: the start position as a string
@@ -117,7 +125,7 @@ class ChessPiece:
                 current_row -= 1
                 current_column -= 1
 
-    def straight_move_requires_jump(self, start_square, goal_square, board):
+    def straight_move_requires_jump(self, start_square: str, goal_square: str, board: BoardType) -> bool:
         """
         Checks whether other pieces are in the way of a proposed up/down or left/right move (if a move requires a jump).
         :param start_square: the start position as a string
@@ -195,7 +203,7 @@ class Pawn(ChessPiece):
     Inherits from ChessPiece.
     Communicates with the Board class to check for opposing chess pieces in diagonal forward directions.
     """
-    def __init__(self, color, label='p'):
+    def __init__(self, color: str, label: str = 'p') -> None:
         """
         Creates a new Pawn object with the specified color and label.
         :param color: 'black' or 'white' as a string
@@ -204,7 +212,7 @@ class Pawn(ChessPiece):
         super().__init__(color, label)
         self._first_move = True  # Whether this is the pawn's first move
 
-    def move_legal(self, start_square, goal_square, board):
+    def move_legal(self, start_square: str, goal_square: str, board: BoardType) -> bool:
         """
         Check if a proposed move is legal according to the pawn's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
@@ -278,7 +286,7 @@ class Knight(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color, label='k'):
+    def __init__(self, color: str, label: str = 'k') -> None:
         """
         Creates a new Knight object with the specified color and label.
         :param color: 'black' or 'white' as a string
@@ -286,7 +294,7 @@ class Knight(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square, goal_square):
+    def move_legal(self, start_square: str, goal_square: str) -> bool:
         """
         Check if a proposed move is legal according to the knight's moveset.
         Knights are allowed to jump over other pieces.
@@ -321,7 +329,7 @@ class Bishop(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color, label='b'):
+    def __init__(self, color: str, label: str = 'b') -> None:
         """
         Creates a new Bishop object with the specified color and label.
         :param color: 'black' or 'white' as a string
@@ -329,7 +337,7 @@ class Bishop(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square, goal_square, board):
+    def move_legal(self, start_square: str, goal_square: str, board: BoardType) -> bool:
         """
         Check if a proposed move is legal according to the bishop's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
@@ -366,7 +374,7 @@ class Rook(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color, label='r'):
+    def __init__(self, color: str, label: str = 'r') -> None:
         """
         Creates a new Rook object with the specified color and label.
         :param color: 'black' or 'white' as a string
@@ -374,7 +382,7 @@ class Rook(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square, goal_square, board):
+    def move_legal(self, start_square: str, goal_square: str, board: BoardType) -> bool:
         """
         Check if a proposed move is legal according to the rook's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
@@ -411,7 +419,7 @@ class Queen(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color, label='q'):
+    def __init__(self, color: str, label: str = 'q') -> None:
         """
         Creates a new Queen object with the specified color and label.
         :param color: 'black' or 'white' as a string
@@ -419,7 +427,7 @@ class Queen(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square, goal_square, board):
+    def move_legal(self, start_square: str, goal_square: str, board: BoardType) -> bool:
         """
         Check if a proposed move is legal according to the queen's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
@@ -464,7 +472,7 @@ class King(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color, label='g'):
+    def __init__(self, color: str, label: str = 'g') -> None:
         """
         Creates a new King object with the specified color and label.
         :param color: 'black' or 'white' as a string
@@ -472,7 +480,7 @@ class King(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square, goal_square):
+    def move_legal(self, start_square: str, goal_square: str) -> bool:
         """
         Check if a proposed move is legal according to the king's moveset.
         Since a king can only move one space in each direction, we do not have to check for jumps.
@@ -503,7 +511,7 @@ class Falcon(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color, label='f'):
+    def __init__(self, color: str, label: str = 'f') -> None:
         """
         Creates a new Falcon object with the specified color and label.
         :param color: 'black' or 'white' as a string
@@ -511,7 +519,7 @@ class Falcon(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square, goal_square, board):
+    def move_legal(self, start_square: str, goal_square: str, board: BoardType) -> bool:
         """
         Check if a proposed move is legal according to the falcon's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
@@ -600,7 +608,7 @@ class Hunter(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color, label='h'):
+    def __init__(self, color: str, label: str = 'h') -> None:
         """
         Creates a new Hunter object with the specified color and label.
         :param color: 'black' or 'white' as a string
@@ -608,7 +616,7 @@ class Hunter(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square, goal_square, board):
+    def move_legal(self, start_square: str, goal_square: str, board: BoardType) -> bool:
         """
         Check if a proposed move is legal according to the hunter's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
@@ -700,7 +708,10 @@ class Board:
     Needs to communicate with the ChessPiece class (and its various child classes) since these pieces can be present on
     the board. Also communicates with the ChessVar class to update its layout when needed.
     """
-    def __init__(self):
+    # Explicitly specify expected types for the Board layout
+    _layout: list[dict[str, ChessPiece | None]]
+
+    def __init__(self) -> None:
         """
         Creates a new Board object.
         The chess board is represented by a list of dictionaries.
@@ -729,7 +740,7 @@ class Board:
              'e1': King('white'), 'f1': Bishop('white'), 'g1': Knight('white'), 'h1': Rook('white')}
         ]
 
-    def get_current_piece_on_square(self, square):
+    def get_current_piece_on_square(self, square: str) -> Optional[ChessPiece]:
         """
         Get the current chess piece on the specified square.
         :param square: square as a two character string label
@@ -744,7 +755,7 @@ class Board:
                     else:
                         return value
 
-    def print(self):
+    def print(self) -> None:
         """
         Prints out the current layout of the board.
         :return: No return value
@@ -775,7 +786,7 @@ class Board:
             print(f" {chr(val)} ", end='')
         print('\n\n')
 
-    def update_move(self, start_square, goal_square, piece):
+    def update_move(self, start_square: str, goal_square: str, piece: ChessPiece) -> None:
         """
         Update the current state of the board by updating start_square to None (the piece was moved away from this
         square) and goal_square to the specified piece (the piece was moved here).
@@ -795,7 +806,7 @@ class Board:
                 if key == goal_square:
                     row[key] = piece
 
-    def update_piece_entered(self, square, piece):
+    def update_piece_entered(self, square: str, piece: ChessPiece) -> None:
         """
         Update the current state of the board by entering the specified piece on the specified square.
         :param square: square label as a two character string
@@ -817,7 +828,10 @@ class Player:
     Communicates with ChessPiece class and its various child classes to keep track of fairy pieces and captured
     pieces.
     """
-    def __init__(self, color):
+    # Explicitly specify expected types for the fairy pieces list
+    _fairy_pieces: list[ChessPiece]
+
+    def __init__(self, color: str) -> None:
         """
         Creates a new player object with the specified color.
         :param color: player color as a string, 'black' or 'white'
@@ -829,21 +843,21 @@ class Player:
         # previous turns, initially empty
         self._captured_pieces = []
 
-    def get_fairy_pieces(self):
+    def get_fairy_pieces(self) -> object:
         """
         Returns the player's current list of available fairy pieces that can be entered into the game.
         :return: Python list of ChessPiece objects
         """
         return self._fairy_pieces
 
-    def get_captured_pieces(self):
+    def get_captured_pieces(self) -> object:
         """
         Returns a list of the pieces the player has lost in the game so far.
         :return: Python list of ChessPiece objects
         """
         return self._captured_pieces
 
-    def add_captured_piece(self, captured_piece):
+    def add_captured_piece(self, captured_piece: ChessPiece) -> None:
         """
         Adds the specified captured piece to the list of captured pieces for this player.
         :param captured_piece: the captured piece as a ChessPiece object
@@ -851,7 +865,7 @@ class Player:
         """
         self._captured_pieces.append(captured_piece)
 
-    def remove_fairy_piece(self, fairy_piece):
+    def remove_fairy_piece(self, fairy_piece: ChessPiece) -> None:
         """
         Remove the specified fairy piece from the player's list of available fairy pieces.
         :param fairy_piece: the entered fairy piece as a ChessPiece object
@@ -859,7 +873,7 @@ class Player:
         """
         self._fairy_pieces.remove(fairy_piece)
 
-    def print_fairy_pieces(self):
+    def print_fairy_pieces(self) -> None:
         """
         Prints out a list of the player's available fairy pieces.
         :return: No return value
@@ -867,7 +881,7 @@ class Player:
         for fairy_piece in self._fairy_pieces:
             print(fairy_piece)
 
-    def print_captured_pieces(self):
+    def print_captured_pieces(self) -> None:
         """
         Prints out a list of the player's pieces that have been captured by the other player on previous turns.
         :return: No return value
@@ -887,7 +901,7 @@ class Chess:
     track of the two players, and the ChessPiece class (and its various child classes) to verify if moves are legal
     according to a piece's moveset.
     """
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Creates a new chess game object.
         """
@@ -907,28 +921,28 @@ class Chess:
         # Other possible states are 'WHITE_WON' and 'BLACK_WON'
         self._game_state = 'UNFINISHED'
 
-    def print_board(self):
+    def print_board(self) -> None:
         """
         Prints out the current state of the chess board.
         :return: No return value, prints out the board.
         """
         self._board.print()
 
-    def get_game_state(self):
+    def get_game_state(self) -> str:
         """
         Returns the game's current state.
         :return: game state as a string
         """
         return self._game_state
 
-    def get_player_turn(self):
+    def get_player_turn(self) -> int:
         """
         Returns the value representing which player's turn it is.
         :return: player turn as an integer, 1 if it's White's turn, -1 if it's Black's turn
         """
         return self._player_turn
 
-    def go_to_next_turn(self):
+    def go_to_next_turn(self) -> None:
         """
         Changes the current turn to the other player.
         A value of 1 corresponds to player1 and a value of -1 corresponds to player2.
@@ -936,7 +950,7 @@ class Chess:
         """
         self._player_turn *= (-1)
 
-    def make_move(self, start_square, goal_square):
+    def make_move(self, start_square: str, goal_square: str) -> bool:
         """
         Moves a piece from start_square to goal_square.
         :param start_square: the start position as a string
@@ -1047,7 +1061,7 @@ class Chess:
         self.go_to_next_turn()
         return True
 
-    def enter_fairy_piece(self, piece_type, square):
+    def enter_fairy_piece(self, piece_type: str, square: str) -> bool:
         """
         Enters the specified fairy piece into the game on the specified square.
         :param piece_type: fairy piece as a char
