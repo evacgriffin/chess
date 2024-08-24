@@ -72,7 +72,7 @@ BoardType = typing.NewType("Board", None)
                     return False
 
                 # If we encounter another piece, the move requires a jump
-                if board.get_current_piece_on_square(current_square) is not None:
+                if board.get_current_piece_on_square(current_square):
                     return True
                 current_row += 1
                 current_column += 1
@@ -88,7 +88,7 @@ BoardType = typing.NewType("Board", None)
                     return False
 
                 # If we encounter another piece, the move requires a jump
-                if board.get_current_piece_on_square(current_square) is not None:
+                if board.get_current_piece_on_square(current_square):
                     return True
                 current_row -= 1
                 current_column += 1
@@ -104,7 +104,7 @@ BoardType = typing.NewType("Board", None)
                     return False
 
                 # If we encounter another piece, the move requires a jump
-                if board.get_current_piece_on_square(current_square) is not None:
+                if board.get_current_piece_on_square(current_square):
                     return True
                 current_row += 1
                 current_column -= 1
@@ -120,7 +120,7 @@ BoardType = typing.NewType("Board", None)
                     return False
 
                 # If we encounter another piece, the move requires a jump
-                if board.get_current_piece_on_square(current_square) is not None:
+                if board.get_current_piece_on_square(current_square):
                     return True
                 current_row -= 1
                 current_column -= 1
@@ -150,7 +150,7 @@ BoardType = typing.NewType("Board", None)
                     return False
 
                 # If we encounter another piece, the move requires a jump
-                if board.get_current_piece_on_square(current_square) is not None:
+                if board.get_current_piece_on_square(current_square):
                     return True
                 current_row += 1
 
@@ -163,7 +163,7 @@ BoardType = typing.NewType("Board", None)
                 if current_square == goal_square:
                     return False
                 # If we encounter another piece, the move requires a jump
-                if board.get_current_piece_on_square(current_square) is not None:
+                if board.get_current_piece_on_square(current_square):
                     return True
                 current_row -= 1
 
@@ -177,7 +177,7 @@ BoardType = typing.NewType("Board", None)
                     return False
 
                 # If we encounter another piece, the move requires a jump
-                if board.get_current_piece_on_square(current_square) is not None:
+                if board.get_current_piece_on_square(current_square):
                     return True
                 current_column -= 1
 
@@ -190,7 +190,7 @@ BoardType = typing.NewType("Board", None)
                 if current_square == goal_square:
                     return False
                 # If we encounter another piece, the move requires a jump
-                if board.get_current_piece_on_square(current_square) is not None:
+                if board.get_current_piece_on_square(current_square):
                     return True
                 current_column += 1
 
@@ -258,7 +258,7 @@ class Pawn(ChessPiece):
         piece_on_goal_square = board.get_current_piece_on_square(goal_square)
 
         # Don't allow moving straight forward onto a square with another piece
-        if start_column == goal_column and piece_on_goal_square is not None:
+        if start_column == goal_column and piece_on_goal_square:
             print("Pawns cannot move straight forward to an occupied square.\n")
             return False
 
@@ -267,7 +267,7 @@ class Pawn(ChessPiece):
             print("Pawns cannot move more than one square diagonally.\n")
             return False
         # Don't allow diagonal movement to empty squares
-        if abs(ord(start_column) - ord(goal_column)) == 1 and piece_on_goal_square is None:
+        if abs(ord(start_column) - ord(goal_column)) == 1 and not piece_on_goal_square:
             print("Pawns cannot move diagonally to an empty square.\n")
             return False
 
@@ -1003,16 +1003,16 @@ class Chess:
         # Is the proposed move legal for this type of ChessPiece?
         if piece_on_start_square.get_label().lower() in ['k', 'g']:
             # Don't need to pass the board if it's a knight or a king
-            if piece_on_start_square.move_legal(start_square, goal_square) is False:
+            if not piece_on_start_square.move_legal(start_square, goal_square):
                 return False
         else:
-            if piece_on_start_square.move_legal(start_square, goal_square, self._board) is False:
+            if not piece_on_start_square.move_legal(start_square, goal_square, self._board):
                 return False
 
         # Does goal_square contain a piece from the current player?
         piece_on_goal_square = self._board.get_current_piece_on_square(goal_square)
 
-        if piece_on_goal_square is not None:
+        if piece_on_goal_square:
             piece_on_goal_square_color = piece_on_goal_square.get_color()
             # If color is 'white' and player_turn = 1, move is illegal
             if piece_on_goal_square_color == 'white' and self._player_turn == 1:
@@ -1105,7 +1105,7 @@ class Chess:
 
         piece_on_square = self._board.get_current_piece_on_square(square)
         # Does the specified square contain a chess piece already?
-        if piece_on_square is not None:
+        if piece_on_square:
             print("The specified square already contains a chess piece. The fairy piece cannot be entered there.\n")
             return False
 
@@ -1143,7 +1143,7 @@ class Chess:
                 fairy_piece = piece
 
         # If we couldn't find the specified piece, it's not available
-        if fairy_piece is None:
+        if not fairy_piece:
             print("The current player does not have this type of fairy piece available anymore!\n")
             return False
 
