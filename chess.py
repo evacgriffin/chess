@@ -596,7 +596,6 @@ class Board:
 
     # TODO: Replace _layout with list[list[...]].
     # TODO: Replace `square: str` with `square: tuple[int, int]`.
-    # TODO: Make board width and height constants.
 
     def __init__(self) -> None:
         """
@@ -627,6 +626,23 @@ class Board:
              'e1': King('white'), 'f1': Bishop('white'), 'g1': Knight('white'), 'h1': Rook('white')}
         ]
 
+        self._width = 8
+        self._height = 8
+
+    def get_width(self) -> int:
+        """
+        Get the board's width.
+        :return: Board object's width as an integer
+        """
+        return self._width
+
+    def get_height(self) -> int:
+        """
+        Get the board's height.
+        :return: Board object's height as an integer
+        """
+        return self._height
+
     def get_current_piece_on_square(self, square: str) -> Optional[ChessPiece]:
         """
         Get the current chess piece on the specified square.
@@ -646,11 +662,11 @@ class Board:
         """
         # Print column labels at the top
         print('  ', end='')
-        for val in range(97, 105):
+        for val in range(97, 97 + self._width):
             print(f" {chr(val)} ", end='')
         print('\n')
 
-        curr_row = 8
+        curr_row = self._height
         for row in self._layout:
             print(f"{curr_row} ", end='')
             for piece in row.values():
@@ -666,7 +682,7 @@ class Board:
 
         # Print column labels at the bottom
         print('  ', end='')
-        for val in range(97, 105):
+        for val in range(97, 97 + self._width):
             print(f" {chr(val)} ", end='')
         print('\n\n')
 
@@ -725,7 +741,7 @@ def diagonal_move_requires_jump(start_square: str, goal_square: str, board: Boar
     if goal_row > start_row and goal_column > start_column:
         current_column = ord(start_square[0]) + 1
         current_row = int(start_square[1]) + 1
-        while current_row <= 8 or current_column <= ord('h'):
+        while current_row <= board.get_height() or current_column <= ord('h'):
             current_square = chr(current_column) + str(current_row)
             # If we reach the goal square, the move did not require any jumps
             if current_square == goal_square:
@@ -757,7 +773,7 @@ def diagonal_move_requires_jump(start_square: str, goal_square: str, board: Boar
     if goal_row > start_row and goal_column < start_column:
         current_column = ord(start_square[0]) - 1
         current_row = int(start_square[1]) + 1
-        while current_row <= 8 or current_column >= ord('a'):
+        while current_row <= board.get_height() or current_column >= ord('a'):
             current_square = chr(current_column) + str(current_row)
             # If we reach the goal square, the move did not require any jumps
             if current_square == goal_square:
@@ -804,7 +820,7 @@ def straight_move_requires_jump(start_square: str, goal_square: str, board: Boar
     # Up direction
     if goal_row > start_row:
         current_row = start_row + 1
-        while current_row <= 8:
+        while current_row <= board.get_height():
             current_square = start_column + str(current_row)
             # If we reach the goal square, the move did not require any jumps
             if current_square == goal_square:
@@ -1016,7 +1032,7 @@ class Chess:
         if column < 'a' or column > 'h':
             print("Column out of bounds! Cannot move chess piece off the board.\n")
             return False
-        if row < 1 or row > 8:
+        if row < 1 or row > self._board.get_height():
             print("Row out of bounds! Cannot move chess piece off the board.\n")
             return False
 
