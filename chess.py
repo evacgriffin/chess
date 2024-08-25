@@ -4,6 +4,7 @@
 # Board, Player, and Chess classes
 
 from abc import ABC, abstractmethod
+from collections.abc import Collection
 from typing import Optional
 
 
@@ -46,6 +47,7 @@ class ChessPiece(ABC):
     def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the piece's moveset and current state of the game board.
+        Overridden in child classes.
         :param start_square: the start position as a string
         :param goal_square: the goal position as a string
         :param board: the game's board as a Board object
@@ -90,7 +92,7 @@ class Pawn(ChessPiece):
         goal_row = int(goal_square[1])
 
         # Check movement on first turn
-        if self._first_move is True:
+        if self._first_move:
             # Don't allow moving forward more than 2 spaces
             if abs(goal_row - start_row) > 2:
                 print("Pawns cannot move more than 2 spaces forward on their first turn!\n")
@@ -110,17 +112,16 @@ class Pawn(ChessPiece):
             return False
 
         # Check forward movement after the first turn
-        if self._first_move is False:
-            if goal_column == start_column and abs(goal_row - start_row) > 1:
-                print("Pawns cannot move more than 1 space forward after their first turn!\n")
-                return False
+        if not self._first_move and goal_column == start_column and abs(goal_row - start_row) > 1:
+            print("Pawns cannot move more than 1 space forward after their first turn!\n")
+            return False
 
         # Get object on goal square to check if diagonal moves are allowed
         piece_on_goal_square = board.get_current_piece_on_square(goal_square)
 
         # Don't allow moving straight forward onto a square with another piece
         if start_column == goal_column and piece_on_goal_square:
-            print("Pawns cannot move straight forward to an occupied square.\n")
+            print("Pawns cannot capture by moving straight forward.\n")
             return False
 
         # Don't allow diagonal movement to columns more than 1 square away
@@ -134,7 +135,7 @@ class Pawn(ChessPiece):
 
         # If we get to this point, the proposed move is legal
         # If it's the pawn's first move, set first move to False and return
-        if self._first_move is True:
+        if self._first_move:
             self._first_move = False
 
         return True
@@ -224,9 +225,9 @@ class Bishop(ChessPiece):
         if diagonal_move_requires_jump(start_square, goal_square, board):
             print("Bishops cannot jump over other pieces!\n")
             return False
-        else:
-            # Otherwise, no jumps are required and the proposed move is legal
-            return True
+
+        # Otherwise, no jumps are required and the proposed move is legal
+        return True
 
 
 class Rook(ChessPiece):
@@ -269,9 +270,9 @@ class Rook(ChessPiece):
         if straight_move_requires_jump(start_square, goal_square, board):
             print("Rooks cannot jump over other pieces!\n")
             return False
-        else:
-            # Otherwise, no jumps are required and the proposed move is legal
-            return True
+
+        # Otherwise, no jumps are required and the proposed move is legal
+        return True
 
 
 class Queen(ChessPiece):
@@ -310,9 +311,8 @@ class Queen(ChessPiece):
             if ord(goal_column) != ord(start_column) and goal_row != start_row:
                 print("A queen can only move diagonally, or straight up, down, left or right!\n")
                 return False
-
         # If a proposed diagonal move requires a jump, the move is illegal
-        if abs(ord(goal_column) - ord(start_column)) == abs(goal_row - start_row):
+        else:
             if diagonal_move_requires_jump(start_square, goal_square, board):
                 print("A queen cannot jump over other pieces!\n")
                 return False
@@ -322,9 +322,9 @@ class Queen(ChessPiece):
             if straight_move_requires_jump(start_square, goal_square, board):
                 print("A queen cannot jump over other pieces!\n")
                 return False
-        else:
-            # Otherwise, no jumps are required and the proposed move is legal
-            return True
+
+        # Otherwise, no jumps are required and the proposed move is legal
+        return True
 
 
 class King(ChessPiece):
@@ -362,9 +362,9 @@ class King(ChessPiece):
         if abs(ord(goal_column) - ord(start_column)) > 1 or abs(goal_row - start_row) > 1:
             print("A king can only move one square in any direction!\n")
             return False
-        else:
-            # Otherwise, the proposed move is legal
-            return True
+
+        # Otherwise, the proposed move is legal
+        return True
 
 
 class Falcon(ChessPiece):
@@ -409,8 +409,9 @@ class Falcon(ChessPiece):
             if goal_row < start_row and ord(goal_column) != ord(start_column):
                 print("Falcons can only move straight backwards!\n")
                 return False
+
             # If we are trying to move forward, but not on a diagonal, the move is illegal
-            elif goal_row > start_row and abs(ord(goal_column)-ord(start_column)) != abs(goal_row-start_row):
+            if goal_row > start_row and abs(ord(goal_column)-ord(start_column)) != abs(goal_row-start_row):
                 print("Falcons can only move diagonally forward!\n")
                 return False
 
@@ -420,18 +421,19 @@ class Falcon(ChessPiece):
                 if straight_move_requires_jump(start_square, goal_square, board):
                     print("A falcon cannot jump over other pieces!\n")
                     return False
-                else:
-                    # Otherwise, no jumps are required and the proposed move is legal
-                    return True
+
+                # Otherwise, no jumps are required and the proposed move is legal
+                return True
+
             # If we are trying to move diagonally, we must check for jumps in that direction
-            elif goal_row > start_row:
+            if goal_row > start_row:
                 # If a proposed diagonal move requires a jump, the move is illegal
                 if diagonal_move_requires_jump(start_square, goal_square, board):
                     print("A falcon cannot jump over other pieces!\n")
                     return False
-                else:
-                    # Otherwise, no jumps are required and the proposed move is legal
-                    return True
+
+                # Otherwise, no jumps are required and the proposed move is legal
+                return True
 
         # Checks for black pieces
         if self._color == 'black':
@@ -439,8 +441,9 @@ class Falcon(ChessPiece):
             if goal_row > start_row and ord(goal_column) != ord(start_column):
                 print("Falcons can only move straight backwards!\n")
                 return False
+
             # If we are trying to move forward, but not on a diagonal, the move is illegal
-            elif goal_row < start_row and abs(ord(goal_column) - ord(start_column)) != abs(goal_row - start_row):
+            if goal_row < start_row and abs(ord(goal_column) - ord(start_column)) != abs(goal_row - start_row):
                 print("Falcons can only move diagonally forward!\n")
                 return False
 
@@ -450,18 +453,21 @@ class Falcon(ChessPiece):
                 if straight_move_requires_jump(start_square, goal_square, board):
                     print("A falcon cannot jump over other pieces!\n")
                     return False
-                else:
-                    # Otherwise, no jumps are required and the proposed move is legal
-                    return True
+
+                # Otherwise, no jumps are required and the proposed move is legal
+                return True
+
             # If we are trying to move diagonally, we must check for jumps in that direction
-            elif goal_row < start_row:
+            if goal_row < start_row:
                 # If a proposed diagonal move requires a jump, the move is illegal
                 if diagonal_move_requires_jump(start_square, goal_square, board):
                     print("A falcon cannot jump over other pieces!\n")
                     return False
-                else:
-                    # Otherwise, no jumps are required and the proposed move is legal
-                    return True
+
+                # Otherwise, no jumps are required and the proposed move is legal
+                return True
+
+        # TODO: Throw an exception for non-existing colors
 
 
 class Hunter(ChessPiece):
@@ -506,8 +512,9 @@ class Hunter(ChessPiece):
             if goal_row > start_row and ord(goal_column) != ord(start_column):
                 print("Hunters can only move straight forward!\n")
                 return False
+
             # If we are trying to move backward, but not on a diagonal, the move is illegal
-            elif goal_row < start_row and abs(ord(goal_column)-ord(start_column)) != abs(goal_row-start_row):
+            if goal_row < start_row and abs(ord(goal_column)-ord(start_column)) != abs(goal_row-start_row):
                 print("Hunters can only move diagonally backward!\n")
                 return False
 
@@ -517,18 +524,19 @@ class Hunter(ChessPiece):
                 if straight_move_requires_jump(start_square, goal_square, board):
                     print("A hunter cannot jump over other pieces!\n")
                     return False
-                else:
-                    # Otherwise, no jumps are required and the proposed move is legal
-                    return True
+
+                # Otherwise, no jumps are required and the proposed move is legal
+                return True
+
             # If we are trying to move backward, we must check for jumps in that direction
-            elif goal_row < start_row:
+            if goal_row < start_row:
                 # If a proposed diagonal move requires a jump, the move is illegal
                 if diagonal_move_requires_jump(start_square, goal_square, board):
                     print("A hunter cannot jump over other pieces!\n")
                     return False
-                else:
-                    # Otherwise, no jumps are required and the proposed move is legal
-                    return True
+
+                # Otherwise, no jumps are required and the proposed move is legal
+                return True
 
         # Checks for black pieces
         if self._color == 'black':
@@ -536,29 +544,34 @@ class Hunter(ChessPiece):
             if goal_row < start_row and ord(goal_column) != ord(start_column):
                 print("Hunters can only move straight forward!\n")
                 return False
+
             # If we are trying to move backward, but not on a diagonal, the move is illegal
-            elif goal_row > start_row and abs(ord(goal_column) - ord(start_column)) != abs(
+            if goal_row > start_row and abs(ord(goal_column) - ord(start_column)) != abs(
                     goal_row - start_row):
                 print("Hunters can only move diagonally backward!\n")
                 return False
+
             # If we are trying to move forward, we must check for jumps in that direction
             if goal_row < start_row:
                 # If a proposed straight move requires a jump, the move is illegal
                 if straight_move_requires_jump(start_square, goal_square, board):
                     print("A hunter cannot jump over other pieces!\n")
                     return False
-                else:
-                    # Otherwise, no jumps are required and the proposed move is legal
-                    return True
+
+                # Otherwise, no jumps are required and the proposed move is legal
+                return True
+
             # If we are trying to move backward, we must check for jumps in that direction
-            elif goal_row > start_row:
+            if goal_row > start_row:
                 # If a proposed diagonal move requires a jump, the move is illegal
                 if diagonal_move_requires_jump(start_square, goal_square, board):
                     print("A hunter cannot jump over other pieces!\n")
                     return False
-                else:
-                    # Otherwise, no jumps are required and the proposed move is legal
-                    return True
+
+                # Otherwise, no jumps are required and the proposed move is legal
+                return True
+
+        # TODO: Throw an exception here.
 
 
 class Board:
@@ -573,6 +586,10 @@ class Board:
     """
     # Explicitly specify expected types for the Board layout
     _layout: list[dict[str, ChessPiece | None]]
+
+    # TODO: Replace _layout with list[list[...]].
+    # TODO: Replace `square: str` with `square: tuple[int, int]`.
+    # TODO: Make board width and height constants.
 
     def __init__(self) -> None:
         """
@@ -613,10 +630,7 @@ class Board:
         for row in self._layout:
             for key, value in row.items():
                 if key == square:
-                    if value is None:
-                        return None
-                    else:
-                        return value
+                    return value
 
     def print(self) -> None:
         """
@@ -634,7 +648,7 @@ class Board:
             print(f"{curr_row} ", end='')
             for piece in row.values():
                 # If there is no piece on the square, print an underscore character
-                if piece is None:
+                if not piece:
                     print(' _ ', end='')
                 # If there is a piece, print its label
                 else:
@@ -660,14 +674,17 @@ class Board:
         :param piece: ChessPiece object to be placed on goal_square
         :return: No return value, the board layout is updated in place
         """
+        # Find start_square and update its value to None
         for row in self._layout:
-            for key in row.keys():
-                # Find start_square and update its value to None
-                if key == start_square:
-                    row[key] = None
-                # Find goal_square and update its value to the ChessPiece object
-                if key == goal_square:
-                    row[key] = piece
+            if start_square in row:
+                row[start_square] = None
+                break
+
+        # Find goal_square and update its value to the ChessPiece object
+        for row in self._layout:
+            if goal_square in row:
+                row[goal_square] = piece
+                break
 
     def update_piece_entered(self, square: str, piece: ChessPiece) -> None:
         """
@@ -677,10 +694,9 @@ class Board:
         :return: No return value, the layout is updated in place
         """
         for row in self._layout:
-            for key in row.keys():
-                # Find square and update its value to piece
-                if key == square:
-                    row[key] = piece
+            if square in row:
+                row[square] = piece
+                break
 
 
 def diagonal_move_requires_jump(start_square: str, goal_square: str, board: Board) -> bool:
@@ -844,6 +860,7 @@ class Player:
     # Explicitly specify expected types for the fairy pieces list
     _fairy_pieces: list[ChessPiece]
 
+    # TODO: Make `color` an enum.
     def __init__(self, color: str) -> None:
         """
         Creates a new player object with the specified color.
@@ -856,14 +873,14 @@ class Player:
         # previous turns, initially empty
         self._captured_pieces = []
 
-    def get_fairy_pieces(self) -> object:
+    def get_fairy_pieces(self) -> Collection[ChessPiece]:
         """
         Returns the player's current list of available fairy pieces that can be entered into the game.
         :return: Python list of ChessPiece objects
         """
         return self._fairy_pieces
 
-    def get_captured_pieces(self) -> object:
+    def get_captured_pieces(self) -> Collection[ChessPiece]:
         """
         Returns a list of the pieces the player has lost in the game so far.
         :return: Python list of ChessPiece objects
@@ -933,6 +950,7 @@ class Chess:
         # Initial game state
         # Other possible states are 'WHITE_WON' and 'BLACK_WON'
         self._game_state = 'UNFINISHED'
+        # TODO: Replace game_state with an enum.
 
     def print_board(self) -> None:
         """
@@ -997,12 +1015,13 @@ class Chess:
 
         piece_on_start_square = self._board.get_current_piece_on_square(start_square)
         # Does start_square contain a chess piece at all?
-        if piece_on_start_square is None:
+        if not piece_on_start_square:
             print("The specified start square does not contain a chess piece. Move cannot be completed.\n")
             return False
 
         # Does start_square contain a piece belonging to the current player?
         # If color is 'black' and player_turn = 1, move is illegal
+        # TODO: Replace `_player_turn` check with a `get_turn_color()` method.
         piece_on_start_square_color = piece_on_start_square.get_color()
         if piece_on_start_square_color == 'black' and self._player_turn == 1:
             print("It's white's turn! Cannot move a black chess piece.\n")
@@ -1036,6 +1055,7 @@ class Chess:
 
             # Does goal_square contain a piece? Capture it!
             # Add captured piece to that players list of captured pieces
+            # TODO: Collapse conditional by using a `self._players: dict[PlayerColor, Player]` structure.
             if piece_on_goal_square_color == 'white':
                 self._white.add_captured_piece(piece_on_goal_square)
                 print("Black captured a piece!\n")
@@ -1095,6 +1115,7 @@ class Chess:
             captured_pieces = self._black.get_captured_pieces()
 
         # Count the number of major pieces the current player has lost
+        # TODO: Refactor into a `Player.count_major_pieces()` method.
         major_piece_labels = ['q', 'r', 'b', 'k']
         num_major_pieces = 0
         for piece in captured_pieces:
