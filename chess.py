@@ -5,12 +5,21 @@
 
 from abc import ABC, abstractmethod
 from collections.abc import Collection
+from enum import Enum
 from typing import Optional
 
 
 class InvalidColorError(Exception):
     """User-defined exception for invalid chess piece color."""
     pass
+
+
+class Color(Enum):
+    """
+    Enumeration representing valid chess piece colors.
+    """
+    BLACK = 1
+    WHITE = 2
 
 
 class ChessPiece(ABC):
@@ -20,24 +29,24 @@ class ChessPiece(ABC):
     type of chess piece).
     Has various child classes for each type of chess piece.
     """
-    def __init__(self, color: str, label: str) -> None:
+    def __init__(self, color: Color, label: str) -> None:
         """
         Creates a new ChessPiece object with the specified color and label.
-        :param color: 'black' or 'white' as a string
+        :param color: piece color as a Color enumeration member
         :param label: piece label as a lowercase character
         """
         self._color = color
 
         # If the piece is white, we change the label to an uppercase char
-        if color == 'white':
+        if color == Color.WHITE:
             self._label = label.upper()
         else:
             self._label = label
 
-    def get_color(self) -> str:
+    def get_color(self) -> Color:
         """
         Returns the chess piece's color.
-        :return: color as a string, 'white' or 'black'
+        :return: piece color as a Color enumeration member
         """
         return self._color
 
@@ -71,10 +80,10 @@ class Pawn(ChessPiece):
     Inherits from ChessPiece.
     Communicates with the Board class to check for opposing chess pieces in diagonal forward directions.
     """
-    def __init__(self, color: str, label: str = 'p') -> None:
+    def __init__(self, color: Color, label: str = 'p') -> None:
         """
         Creates a new Pawn object with the specified color and label.
-        :param color: 'black' or 'white' as a string
+        :param color: piece color as a Color enumeration member
         :param label: piece label as a lowercase char
         """
         super().__init__(color, label)
@@ -108,8 +117,8 @@ class Pawn(ChessPiece):
                 return False
 
         # Don't allow moving backwards or sideways
-        if ((self._color == 'white' and goal_row < start_row)
-                or (self._color == 'black' and goal_row > start_row)):
+        if ((self._color == Color.WHITE and goal_row < start_row)
+                or (self._color == Color.BLACK and goal_row > start_row)):
             print("Pawns cannot move backwards!\n")
             return False
         if goal_row == start_row:
@@ -153,10 +162,10 @@ class Knight(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color: str, label: str = 'k') -> None:
+    def __init__(self, color: Color, label: str = 'k') -> None:
         """
         Creates a new Knight object with the specified color and label.
-        :param color: 'black' or 'white' as a string
+        :param color: piece color as a Color enumeration member
         :param label: piece label as a lowercase char
         """
         super().__init__(color, label)
@@ -197,10 +206,10 @@ class Bishop(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color: str, label: str = 'b') -> None:
+    def __init__(self, color: Color, label: str = 'b') -> None:
         """
         Creates a new Bishop object with the specified color and label.
-        :param color: 'black' or 'white' as a string
+        :param color: piece color as a Color enumeration member
         :param label: piece label as a lowercase char
         """
         super().__init__(color, label)
@@ -242,10 +251,10 @@ class Rook(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color: str, label: str = 'r') -> None:
+    def __init__(self, color: Color, label: str = 'r') -> None:
         """
         Creates a new Rook object with the specified color and label.
-        :param color: 'black' or 'white' as a string
+        :param color: piece color as a Color enumeration member
         :param label: piece label as a lowercase char
         """
         super().__init__(color, label)
@@ -287,10 +296,10 @@ class Queen(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color: str, label: str = 'q') -> None:
+    def __init__(self, color: Color, label: str = 'q') -> None:
         """
         Creates a new Queen object with the specified color and label.
-        :param color: 'black' or 'white' as a string
+        :param color: piece color as a Color enumeration member
         :param label: piece label as a lowercase char
         """
         super().__init__(color, label)
@@ -339,10 +348,10 @@ class King(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color: str, label: str = 'g') -> None:
+    def __init__(self, color: Color, label: str = 'g') -> None:
         """
         Creates a new King object with the specified color and label.
-        :param color: 'black' or 'white' as a string
+        :param color: piece color as a Color enumeration member
         :param label: piece label as a lowercase char
         """
         super().__init__(color, label)
@@ -379,10 +388,10 @@ class Falcon(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color: str, label: str = 'f') -> None:
+    def __init__(self, color: Color, label: str = 'f') -> None:
         """
         Creates a new Falcon object with the specified color and label.
-        :param color: 'black' or 'white' as a string
+        :param color: piece color as a Color enumeration member
         :param label: piece label as a lowercase char
         """
         super().__init__(color, label)
@@ -409,7 +418,7 @@ class Falcon(ChessPiece):
             return False
 
         # Checks for white pieces
-        if self._color == 'white':
+        if self._color == Color.WHITE:
             # If we are trying to move backwards, but not within the same column, the move is illegal
             if goal_row < start_row and ord(goal_column) != ord(start_column):
                 print("Falcons can only move straight backwards!\n")
@@ -441,7 +450,7 @@ class Falcon(ChessPiece):
                 return True
 
         # Checks for black pieces
-        if self._color == 'black':
+        if self._color == Color.BLACK:
             # If we are trying to move backwards, but not within the same column, the move is illegal
             if goal_row > start_row and ord(goal_column) != ord(start_column):
                 print("Falcons can only move straight backwards!\n")
@@ -483,10 +492,10 @@ class Hunter(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color: str, label: str = 'h') -> None:
+    def __init__(self, color: Color, label: str = 'h') -> None:
         """
         Creates a new Hunter object with the specified color and label.
-        :param color: 'black' or 'white' as a string
+        :param color: piece color as a Color enumeration member
         :param label: piece label as a lowercase char
         """
         super().__init__(color, label)
@@ -513,7 +522,7 @@ class Hunter(ChessPiece):
             return False
 
         # Checks for white pieces
-        if self._color == 'white':
+        if self._color == Color.WHITE:
             # If we are trying to move forward, but not within the same column, the move is illegal
             if goal_row > start_row and ord(goal_column) != ord(start_column):
                 print("Hunters can only move straight forward!\n")
@@ -545,7 +554,7 @@ class Hunter(ChessPiece):
                 return True
 
         # Checks for black pieces
-        if self._color == 'black':
+        if self._color == Color.BLACK:
             # If we are trying to move forward, but not within the same column, the move is illegal
             if goal_row < start_row and ord(goal_column) != ord(start_column):
                 print("Hunters can only move straight forward!\n")
@@ -605,11 +614,11 @@ class Board:
         If a square on the board is empty, its value is None
         """
         self._layout = [
-            {'a8': Rook('black'), 'b8': Knight('black'), 'c8': Bishop('black'), 'd8': Queen('black'),
-             'e8': King('black'), 'f8': Bishop('black'), 'g8': Knight('black'), 'h8': Rook('black')},
+            {'a8': Rook(Color.BLACK), 'b8': Knight(Color.BLACK), 'c8': Bishop(Color.BLACK), 'd8': Queen(Color.BLACK),
+             'e8': King(Color.BLACK), 'f8': Bishop(Color.BLACK), 'g8': Knight(Color.BLACK), 'h8': Rook(Color.BLACK)},
 
-            {'a7': Pawn('black'), 'b7': Pawn('black'), 'c7': Pawn('black'), 'd7': Pawn('black'),
-             'e7': Pawn('black'), 'f7': Pawn('black'), 'g7': Pawn('black'), 'h7': Pawn('black')},
+            {'a7': Pawn(Color.BLACK), 'b7': Pawn(Color.BLACK), 'c7': Pawn(Color.BLACK), 'd7': Pawn(Color.BLACK),
+             'e7': Pawn(Color.BLACK), 'f7': Pawn(Color.BLACK), 'g7': Pawn(Color.BLACK), 'h7': Pawn(Color.BLACK)},
 
             {'a6': None, 'b6': None, 'c6': None, 'd6': None, 'e6': None, 'f6': None, 'g6': None, 'h6': None},
 
@@ -619,11 +628,11 @@ class Board:
 
             {'a3': None, 'b3': None, 'c3': None, 'd3': None, 'e3': None, 'f3': None, 'g3': None, 'h3': None},
 
-            {'a2': Pawn('white'), 'b2': Pawn('white'), 'c2': Pawn('white'), 'd2': Pawn('white'),
-             'e2': Pawn('white'), 'f2': Pawn('white'), 'g2': Pawn('white'), 'h2': Pawn('white')},
+            {'a2': Pawn(Color.WHITE), 'b2': Pawn(Color.WHITE), 'c2': Pawn(Color.WHITE), 'd2': Pawn(Color.WHITE),
+             'e2': Pawn(Color.WHITE), 'f2': Pawn(Color.WHITE), 'g2': Pawn(Color.WHITE), 'h2': Pawn(Color.WHITE)},
 
-            {'a1': Rook('white'), 'b1': Knight('white'), 'c1': Bishop('white'), 'd1': Queen('white'),
-             'e1': King('white'), 'f1': Bishop('white'), 'g1': Knight('white'), 'h1': Rook('white')}
+            {'a1': Rook(Color.WHITE), 'b1': Knight(Color.WHITE), 'c1': Bishop(Color.WHITE), 'd1': Queen(Color.WHITE),
+             'e1': King(Color.WHITE), 'f1': Bishop(Color.WHITE), 'g1': Knight(Color.WHITE), 'h1': Rook(Color.WHITE)}
         ]
 
         self._width = 8
@@ -883,8 +892,7 @@ class Player:
     # Explicitly specify expected types for the fairy pieces list
     _fairy_pieces: list[ChessPiece]
 
-    # TODO: Make `color` an enum.
-    def __init__(self, color: str) -> None:
+    def __init__(self, color: Color) -> None:
         """
         Creates a new player object with the specified color.
         :param color: player color as a string, 'black' or 'white'
@@ -962,13 +970,14 @@ class Chess:
         self._board = Board()
 
         # Initialize the two players.
-        self._white = Player('white')
-        self._black = Player('black')
+        self._white = Player(Color.WHITE)
+        self._black = Player(Color.BLACK)
 
         # White begins per the standard rules
         # Integer 1: White's turn, Integer -1: Black's turn
         # This way, to switch turns, all we have to do is multiply by (-1) to flip the value
         self._player_turn = 1
+        # TODO: Count all turns, use mod to determine current turn.
 
         # Initial game state
         # Other possible states are 'WHITE_WON' and 'BLACK_WON'
@@ -1046,12 +1055,12 @@ class Chess:
         # If color is 'black' and player_turn = 1, move is illegal
         # TODO: Replace `_player_turn` check with a `get_turn_color()` method.
         piece_on_start_square_color = piece_on_start_square.get_color()
-        if piece_on_start_square_color == 'black' and self._player_turn == 1:
+        if piece_on_start_square_color == Color.BLACK and self._player_turn == 1:
             print("It's white's turn! Cannot move a black chess piece.\n")
             return False
 
         # If color is 'white' and player_turn = -1, move is illegal
-        if piece_on_start_square_color == 'white' and self._player_turn == -1:
+        if piece_on_start_square_color == Color.WHITE and self._player_turn == -1:
             print("It's black's turn! Cannot move a white chess piece.\n")
             return False
 
@@ -1065,12 +1074,12 @@ class Chess:
         if piece_on_goal_square:
             piece_on_goal_square_color = piece_on_goal_square.get_color()
             # If color is 'white' and player_turn = 1, move is illegal
-            if piece_on_goal_square_color == 'white' and self._player_turn == 1:
+            if piece_on_goal_square_color == Color.WHITE and self._player_turn == 1:
                 print("The goal square already contains a white chess piece!\n")
                 return False
 
             # If color is 'black' and player_turn = -1, move is illegal
-            if piece_on_goal_square_color == 'black' and self._player_turn == -1:
+            if piece_on_goal_square_color == Color.BLACK and self._player_turn == -1:
                 print("The goal square already contains a black chess piece!\n")
                 return False
 
@@ -1079,14 +1088,14 @@ class Chess:
             # Does goal_square contain a piece? Capture it!
             # Add captured piece to that players list of captured pieces
             # TODO: Collapse conditional by using a `self._players: dict[PlayerColor, Player]` structure.
-            if piece_on_goal_square_color == 'white':
+            if piece_on_goal_square_color == Color.WHITE:
                 self._white.add_captured_piece(piece_on_goal_square)
                 print("Black captured a piece!\n")
                 print("White's captured pieces: ", end=' ')
                 for piece in self._white.get_captured_pieces():
                     print(piece.get_label(), end=' ')
                 print('\n')
-            elif piece_on_goal_square_color == 'black':
+            elif piece_on_goal_square_color == Color.BLACK:
                 self._black.add_captured_piece(piece_on_goal_square)
                 print("White captured a piece!\n")
                 print("Black's captured pieces: ", end=' ')
