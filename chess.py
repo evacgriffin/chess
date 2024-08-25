@@ -8,6 +8,11 @@ from collections.abc import Collection
 from typing import Optional
 
 
+class InvalidColorError(Exception):
+    """User-defined exception for invalid chess piece color."""
+    pass
+
+
 class ChessPiece(ABC):
     """
     Represents a chess piece with a color and label.
@@ -467,7 +472,8 @@ class Falcon(ChessPiece):
                 # Otherwise, no jumps are required and the proposed move is legal
                 return True
 
-        # TODO: Throw an exception for non-existing colors
+        # If we get to this point, the chess piece color is invalid
+        raise InvalidColorError("This is not a valid chess piece color.")
 
 
 class Hunter(ChessPiece):
@@ -571,7 +577,8 @@ class Hunter(ChessPiece):
                 # Otherwise, no jumps are required and the proposed move is legal
                 return True
 
-        # TODO: Throw an exception here.
+        # If we get to this point, the chess piece color is invalid
+        raise InvalidColorError("This is not a valid chess piece color.")
 
 
 class Board:
