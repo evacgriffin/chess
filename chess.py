@@ -317,14 +317,12 @@ class Queen(ChessPiece):
                     False if move is illegal
                     True if move is legal
         """
-        start_column = start_square[0]
-        start_row = int(start_square[1])
-        goal_column = goal_square[0]
-        goal_row = int(goal_square[1])
+        start_row, start_column = start_square
+        goal_row, goal_column = goal_square
 
         # We must check that we move either diagonally or straight up/down/left/right
-        if abs(ord(goal_column) - ord(start_column)) != abs(goal_row - start_row):
-            if ord(goal_column) != ord(start_column) and goal_row != start_row:
+        if abs(goal_column - start_column) != abs(goal_row - start_row):
+            if goal_column != start_column and goal_row != start_row:
                 print("A queen can only move diagonally, or straight up, down, left or right!\n")
                 return False
         # If a proposed diagonal move requires a jump, the move is illegal
@@ -334,7 +332,7 @@ class Queen(ChessPiece):
                 return False
 
         # If a proposed straight move requires a jump, the move is illegal
-        if ord(goal_column) == ord(start_column) or goal_row == start_row:
+        if goal_column == start_column or goal_row == start_row:
             if straight_move_requires_jump(start_square, goal_square, board):
                 print("A queen cannot jump over other pieces!\n")
                 return False
