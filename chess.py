@@ -708,7 +708,7 @@ def diagonal_move_requires_jump(start_square: tuple[int, int], goal_square: tupl
     start_row, start_col = start_square
     goal_row, goal_col = goal_square
 
-    # Top right direction
+    # Bottom right direction
     if goal_row > start_row and goal_col > start_col:
         current_column = start_col + 1
         current_row = start_row + 1
@@ -725,7 +725,7 @@ def diagonal_move_requires_jump(start_square: tuple[int, int], goal_square: tupl
             current_row += 1
             current_column += 1
 
-    # Bottom right direction
+    # Top right direction
     if goal_row < start_row and goal_col > start_col:
         current_column = start_col + 1
         current_row = start_row - 1
@@ -742,7 +742,7 @@ def diagonal_move_requires_jump(start_square: tuple[int, int], goal_square: tupl
             current_row -= 1
             current_column += 1
 
-    # Top left direction
+    # Bottom left direction
     if goal_row > start_row and goal_col < start_col:
         current_column = start_col - 1
         current_row = start_row + 1
@@ -759,7 +759,7 @@ def diagonal_move_requires_jump(start_square: tuple[int, int], goal_square: tupl
             current_row += 1
             current_column -= 1
 
-    # Bottom left direction
+    # Top left direction
     if goal_row < start_row and goal_col < start_col:
         current_column = start_col - 1
         current_row = start_row - 1
@@ -790,7 +790,7 @@ def straight_move_requires_jump(start_square: tuple[int, int], goal_square: tupl
     start_row, start_col = start_square
     goal_row, goal_col = goal_square
 
-    # Up direction
+    # Down direction
     if goal_row > start_row:
         current_row = start_row + 1
         while current_row < board.get_height():
@@ -805,7 +805,7 @@ def straight_move_requires_jump(start_square: tuple[int, int], goal_square: tupl
 
             current_row += 1
 
-    # Down direction
+    # Up direction
     if goal_row < start_row:
         current_row = start_row - 1
         while current_row >= 0:
