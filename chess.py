@@ -404,17 +404,17 @@ class Falcon(ChessPiece):
         # Checks for white pieces
         if self._color == Color.WHITE:
             # If we are trying to move backwards, but not within the same column, the move is illegal
-            if goal_row < start_row and goal_column != start_column:
+            if goal_row > start_row and goal_column != start_column:
                 print("Falcons can only move straight backwards!\n")
                 return False
 
             # If we are trying to move forward, but not on a diagonal, the move is illegal
-            if goal_row > start_row and abs(goal_column - start_column) != abs(goal_row-start_row):
+            if goal_row < start_row and abs(goal_column - start_column) != abs(goal_row-start_row):
                 print("Falcons can only move diagonally forward!\n")
                 return False
 
             # If we are trying to move backwards, we must check for jumps in that direction
-            if goal_row < start_row:
+            if goal_row > start_row:
                 # If a proposed straight move requires a jump, the move is illegal
                 if straight_move_requires_jump(start_square, goal_square, board):
                     print("A falcon cannot jump over other pieces!\n")
@@ -424,7 +424,7 @@ class Falcon(ChessPiece):
                 return True
 
             # If we are trying to move diagonally, we must check for jumps in that direction
-            if goal_row > start_row:
+            if goal_row < start_row:
                 # If a proposed diagonal move requires a jump, the move is illegal
                 if diagonal_move_requires_jump(start_square, goal_square, board):
                     print("A falcon cannot jump over other pieces!\n")
@@ -436,17 +436,17 @@ class Falcon(ChessPiece):
         # Checks for black pieces
         if self._color == Color.BLACK:
             # If we are trying to move backwards, but not within the same column, the move is illegal
-            if goal_row > start_row and goal_column != start_column:
+            if goal_row < start_row and goal_column != start_column:
                 print("Falcons can only move straight backwards!\n")
                 return False
 
             # If we are trying to move forward, but not on a diagonal, the move is illegal
-            if goal_row < start_row and abs(goal_column - start_column) != abs(goal_row - start_row):
+            if goal_row > start_row and abs(goal_column - start_column) != abs(goal_row - start_row):
                 print("Falcons can only move diagonally forward!\n")
                 return False
 
             # If we are trying to move backwards, we must check for jumps in that direction
-            if goal_row > start_row:
+            if goal_row < start_row:
                 # If a proposed straight move requires a jump, the move is illegal
                 if straight_move_requires_jump(start_square, goal_square, board):
                     print("A falcon cannot jump over other pieces!\n")
@@ -456,7 +456,7 @@ class Falcon(ChessPiece):
                 return True
 
             # If we are trying to move diagonally, we must check for jumps in that direction
-            if goal_row < start_row:
+            if goal_row > start_row:
                 # If a proposed diagonal move requires a jump, the move is illegal
                 if diagonal_move_requires_jump(start_square, goal_square, board):
                     print("A falcon cannot jump over other pieces!\n")
@@ -506,38 +506,6 @@ class Hunter(ChessPiece):
         # Checks for white pieces
         if self._color == Color.WHITE:
             # If we are trying to move forward, but not within the same column, the move is illegal
-            if goal_row > start_row and goal_column != start_column:
-                print("Hunters can only move straight forward!\n")
-                return False
-
-            # If we are trying to move backward, but not on a diagonal, the move is illegal
-            if goal_row < start_row and abs(goal_column - start_column) != abs(goal_row - start_row):
-                print("Hunters can only move diagonally backward!\n")
-                return False
-
-            # If we are trying to move forward, we must check for jumps in that direction
-            if goal_row > start_row:
-                # If a proposed straight move requires a jump, the move is illegal
-                if straight_move_requires_jump(start_square, goal_square, board):
-                    print("A hunter cannot jump over other pieces!\n")
-                    return False
-
-                # Otherwise, no jumps are required and the proposed move is legal
-                return True
-
-            # If we are trying to move backward, we must check for jumps in that direction
-            if goal_row < start_row:
-                # If a proposed diagonal move requires a jump, the move is illegal
-                if diagonal_move_requires_jump(start_square, goal_square, board):
-                    print("A hunter cannot jump over other pieces!\n")
-                    return False
-
-                # Otherwise, no jumps are required and the proposed move is legal
-                return True
-
-        # Checks for black pieces
-        if self._color == Color.BLACK:
-            # If we are trying to move forward, but not within the same column, the move is illegal
             if goal_row < start_row and goal_column != start_column:
                 print("Hunters can only move straight forward!\n")
                 return False
@@ -559,6 +527,38 @@ class Hunter(ChessPiece):
 
             # If we are trying to move backward, we must check for jumps in that direction
             if goal_row > start_row:
+                # If a proposed diagonal move requires a jump, the move is illegal
+                if diagonal_move_requires_jump(start_square, goal_square, board):
+                    print("A hunter cannot jump over other pieces!\n")
+                    return False
+
+                # Otherwise, no jumps are required and the proposed move is legal
+                return True
+
+        # Checks for black pieces
+        if self._color == Color.BLACK:
+            # If we are trying to move forward, but not within the same column, the move is illegal
+            if goal_row > start_row and goal_column != start_column:
+                print("Hunters can only move straight forward!\n")
+                return False
+
+            # If we are trying to move backward, but not on a diagonal, the move is illegal
+            if goal_row < start_row and abs(goal_column - start_column) != abs(goal_row - start_row):
+                print("Hunters can only move diagonally backward!\n")
+                return False
+
+            # If we are trying to move forward, we must check for jumps in that direction
+            if goal_row > start_row:
+                # If a proposed straight move requires a jump, the move is illegal
+                if straight_move_requires_jump(start_square, goal_square, board):
+                    print("A hunter cannot jump over other pieces!\n")
+                    return False
+
+                # Otherwise, no jumps are required and the proposed move is legal
+                return True
+
+            # If we are trying to move backward, we must check for jumps in that direction
+            if goal_row < start_row:
                 # If a proposed diagonal move requires a jump, the move is illegal
                 if diagonal_move_requires_jump(start_square, goal_square, board):
                     print("A hunter cannot jump over other pieces!\n")
