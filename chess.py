@@ -110,10 +110,8 @@ class Pawn(ChessPiece):
                     False if move is illegal
                     True if move is legal
         """
-        start_column = start_square[0]
-        start_row = int(start_square[1])
-        goal_column = goal_square[0]
-        goal_row = int(goal_square[1])
+        start_row, start_column = start_square
+        goal_row, goal_column = goal_square
 
         # Check movement on first turn
         if self._first_move:
@@ -149,11 +147,11 @@ class Pawn(ChessPiece):
             return False
 
         # Don't allow diagonal movement to columns more than 1 square away
-        if abs(ord(start_column) - ord(goal_column)) > 1:
+        if abs(start_column - goal_column) > 1:
             print("Pawns cannot move more than one square diagonally.\n")
             return False
         # Don't allow diagonal movement to empty squares
-        if abs(ord(start_column) - ord(goal_column)) == 1 and not piece_on_goal_square:
+        if abs(start_column - goal_column) == 1 and not piece_on_goal_square:
             print("Pawns cannot move diagonally to an empty square.\n")
             return False
 
