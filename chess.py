@@ -620,27 +620,6 @@ class Board:
             [Rook(Color.WHITE), Knight(Color.WHITE), Bishop(Color.WHITE), Queen(Color.WHITE), King(Color.WHITE),
              Bishop(Color.WHITE), Knight(Color.WHITE), Rook(Color.WHITE)]
         ]
-        # self._layout = [
-        #     {'a8': Rook(Color.BLACK), 'b8': Knight(Color.BLACK), 'c8': Bishop(Color.BLACK), 'd8': Queen(Color.BLACK),
-        #      'e8': King(Color.BLACK), 'f8': Bishop(Color.BLACK), 'g8': Knight(Color.BLACK), 'h8': Rook(Color.BLACK)},
-        #
-        #     {'a7': Pawn(Color.BLACK), 'b7': Pawn(Color.BLACK), 'c7': Pawn(Color.BLACK), 'd7': Pawn(Color.BLACK),
-        #      'e7': Pawn(Color.BLACK), 'f7': Pawn(Color.BLACK), 'g7': Pawn(Color.BLACK), 'h7': Pawn(Color.BLACK)},
-        #
-        #     {'a6': None, 'b6': None, 'c6': None, 'd6': None, 'e6': None, 'f6': None, 'g6': None, 'h6': None},
-        #
-        #     {'a5': None, 'b5': None, 'c5': None, 'd5': None, 'e5': None, 'f5': None, 'g5': None, 'h5': None},
-        #
-        #     {'a4': None, 'b4': None, 'c4': None, 'd4': None, 'e4': None, 'f4': None, 'g4': None, 'h4': None},
-        #
-        #     {'a3': None, 'b3': None, 'c3': None, 'd3': None, 'e3': None, 'f3': None, 'g3': None, 'h3': None},
-        #
-        #     {'a2': Pawn(Color.WHITE), 'b2': Pawn(Color.WHITE), 'c2': Pawn(Color.WHITE), 'd2': Pawn(Color.WHITE),
-        #      'e2': Pawn(Color.WHITE), 'f2': Pawn(Color.WHITE), 'g2': Pawn(Color.WHITE), 'h2': Pawn(Color.WHITE)},
-        #
-        #     {'a1': Rook(Color.WHITE), 'b1': Knight(Color.WHITE), 'c1': Bishop(Color.WHITE), 'd1': Queen(Color.WHITE),
-        #      'e1': King(Color.WHITE), 'f1': Bishop(Color.WHITE), 'g1': Knight(Color.WHITE), 'h1': Rook(Color.WHITE)}
-        # ]
 
         self._width = 8
         self._height = 8
