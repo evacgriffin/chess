@@ -20,18 +20,6 @@ class Color(Enum):
     WHITE = 2
 
 
-class ColumnLabels(Enum):
-    """Enumeration representing valid column labels of the chess board."""
-    a = 0
-    b = 1
-    c = 2
-    d = 3
-    e = 4
-    f = 5
-    g = 6
-    h = 7
-
-
 class ChessPiece(ABC):
     """
     Represents a chess piece with a color and label.
@@ -940,7 +928,7 @@ def convert_to_tuple(square: str) -> tuple[int, int]:
     :param square: square as a string of two characters representing 'ColRow' on the chess board
     :return: the specified square as a tuple of two integers (row, column)
     """
-    column = ColumnLabels[square[0]].value
+    column = ord(square[0]) - ord('a')
     row = int(square[1])
     return row, column
 
