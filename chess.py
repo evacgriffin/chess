@@ -577,9 +577,9 @@ class Board:
     letters a-h.
     Responsible for initializing and storing the current layout of the chess board, printing out a visualization of the
     current board layout, and completing a move by updating the two relevant squares on the board after a move has been
-    validated by the ChessVar class.
+    validated by the Chess class.
     Needs to communicate with the ChessPiece class (and its various child classes) since these pieces can be present on
-    the board. Also communicates with the ChessVar class to update its layout when needed.
+    the board. Also communicates with the Chess class to update its layout when needed.
     """
     # Explicitly specify expected types for the Board layout
     _layout: list[list[ChessPiece | None]]
@@ -935,9 +935,9 @@ def convert_to_tuple(square: str) -> tuple[int, int]:
 
 class Chess:
     """
-    Represents a falcon-hunter chess game with two players.
-    Responsible for the overall game loop: initializing a chess board, initializing two players, setting which player's
-    turn it is, and keeping track of the game state (whether the game is ongoing or which player won).
+    Represents a falcon-hunter chess game.
+    Responsible for the overall game loop: initializes a chess board, initializes two players, sets which player's
+    turn it is, and keeps track of the game state (whether the game is ongoing or which player won).
     This class is also responsible for making a move and ensuring that the move is legal, as well as entering a fairy
     piece to the game if it's allowed.
     Communicates with the Board class to initialize and update the chess board, with the Player class to create and keep
