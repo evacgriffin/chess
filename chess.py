@@ -180,7 +180,7 @@ class Knight(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
+    def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the knight's moveset.
         Knights are allowed to jump over other pieces.
@@ -224,7 +224,7 @@ class Bishop(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
+    def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the bishop's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
@@ -269,7 +269,7 @@ class Rook(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
+    def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the rook's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
@@ -314,7 +314,7 @@ class Queen(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
+    def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the queen's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
@@ -366,7 +366,7 @@ class King(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
+    def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the king's moveset.
         Since a king can only move one space in each direction, we do not have to check for jumps.
@@ -406,7 +406,7 @@ class Falcon(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
+    def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the falcon's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
@@ -510,7 +510,7 @@ class Hunter(ChessPiece):
         """
         super().__init__(color, label)
 
-    def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
+    def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the hunter's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
