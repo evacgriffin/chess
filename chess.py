@@ -1118,16 +1118,16 @@ class Chess:
         self.go_to_next_turn()
         return True
 
-    def enter_fairy_piece(self, piece_type: str, square: str) -> bool:
+    def enter_fairy_piece(self, piece_type: str, square: tuple[int, int]) -> bool:
         """
         Enters the specified fairy piece into the game on the specified square.
         :param piece_type: fairy piece as a char
-        :param square: square to place the piece on as a string
+        :param square: square to place the piece on as a tuple of integers (row, column)
         :return:    Boolean:
                     False if the piece is not allowed to enter this square at this turn
                     True if the piece can enter the specified square legally
         """
-        square_row = int(square[1])
+        square_row, square_column = square
 
         # Is the game over?
         if self._game_state != 'UNFINISHED':
