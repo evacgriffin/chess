@@ -43,7 +43,7 @@ def main():
     game = Chess()
     game.print_board()
 
-    while game.get_game_state() == 'UNFINISHED':
+    while game.get_game_state() == "UNFINISHED":
         # Print current player
         if game.get_player_turn() == 1:
             print("White's turn!\n")
@@ -64,13 +64,13 @@ def main():
 
         game.make_move(start_square, goal_square)
 
-    if game.get_game_state() == 'BLACK_WON':
-        winner = 'Black'
+    if game.get_game_state() == "BLACK_WON":
+        winner = "Black"
     else:
-        winner = 'White'
+        winner = "White"
 
     print(f"GAME OVER! {winner} won!\n")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
