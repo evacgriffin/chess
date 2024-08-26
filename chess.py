@@ -274,13 +274,11 @@ class Rook(ChessPiece):
                     False if move is illegal
                     True if move is legal
         """
-        start_column = start_square[0]
-        start_row = int(start_square[1])
-        goal_column = goal_square[0]
-        goal_row = int(goal_square[1])
+        start_row, start_column = start_square
+        goal_row, goal_column = goal_square
 
         # Is goal_square on the same column or row as start_square?
-        if ord(goal_column) != ord(start_column) and goal_row != start_row:
+        if goal_column != start_column and goal_row != start_row:
             print("Rooks can only move horizontally or vertically!\n")
             return False
 
