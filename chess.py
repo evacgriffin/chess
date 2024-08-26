@@ -72,8 +72,8 @@ class ChessPiece(ABC):
         """
         Check if a proposed move is legal according to the piece's moveset and current state of the game board.
         Overridden in child classes.
-        :param start_square: the start position as a string
-        :param goal_square: the goal position as a string
+        :param start_square: the start position as a tuple of integers (row, column)
+        :param goal_square: the goal position as a tuple of integers (row, column)
         :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
@@ -99,12 +99,12 @@ class Pawn(ChessPiece):
         super().__init__(color, label)
         self._first_move = True  # Whether this is the pawn's first move
 
-    def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
+    def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the pawn's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
-        :param start_square: the start position as a string
-        :param goal_square: the goal position as a string
+        :param start_square: the start position as a tuple of integers (row, column)
+        :param goal_square: the goal position as a tuple of integers (row, column)
         :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
@@ -184,8 +184,8 @@ class Knight(ChessPiece):
         """
         Check if a proposed move is legal according to the knight's moveset.
         Knights are allowed to jump over other pieces.
-        :param start_square: the start position as a string
-        :param goal_square: the goal position as a string
+        :param start_square: the start position as a tuple of integers (row, column)
+        :param goal_square: the goal position as a tuple of integers (row, column)
         :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
@@ -228,8 +228,8 @@ class Bishop(ChessPiece):
         """
         Check if a proposed move is legal according to the bishop's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
-        :param start_square: the start position as a string
-        :param goal_square: the goal position as a string
+        :param start_square: the start position as a tuple of integers (row, column)
+        :param goal_square: the goal position as a tuple of integers (row, column)
         :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
@@ -273,8 +273,8 @@ class Rook(ChessPiece):
         """
         Check if a proposed move is legal according to the rook's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
-        :param start_square: the start position as a string
-        :param goal_square: the goal position as a string
+        :param start_square: the start position as a tuple of integers (row, column)
+        :param goal_square: the goal position as a tuple of integers (row, column)
         :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
@@ -318,8 +318,8 @@ class Queen(ChessPiece):
         """
         Check if a proposed move is legal according to the queen's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
-        :param start_square: the start position as a string
-        :param goal_square: the goal position as a string
+        :param start_square: the start position as a tuple of integers (row, column)
+        :param goal_square: the goal position as a tuple of integers (row, column)
         :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
@@ -370,8 +370,8 @@ class King(ChessPiece):
         """
         Check if a proposed move is legal according to the king's moveset.
         Since a king can only move one space in each direction, we do not have to check for jumps.
-        :param start_square: the start position as a string
-        :param goal_square: the goal position as a string
+        :param start_square: the start position as a tuple of integers (row, column)
+        :param goal_square: the goal position as a tuple of integers (row, column)
         :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
@@ -410,8 +410,8 @@ class Falcon(ChessPiece):
         """
         Check if a proposed move is legal according to the falcon's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
-        :param start_square: the start position as a string
-        :param goal_square: the goal position as a string
+        :param start_square: the start position as a tuple of integers (row, column)
+        :param goal_square: the goal position as a tuple of integers (row, column)
         :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
@@ -514,8 +514,8 @@ class Hunter(ChessPiece):
         """
         Check if a proposed move is legal according to the hunter's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
-        :param start_square: the start position as a string
-        :param goal_square: the goal position as a string
+        :param start_square: the start position as a tuple of integers (row, column)
+        :param goal_square: the goal position as a tuple of integers (row, column)
         :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
