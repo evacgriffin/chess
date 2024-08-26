@@ -367,13 +367,11 @@ class King(ChessPiece):
                     False if move is illegal
                     True if move is legal
         """
-        start_column = start_square[0]
-        start_row = int(start_square[1])
-        goal_column = goal_square[0]
-        goal_row = int(goal_square[1])
+        start_row, start_column = start_square
+        goal_row, goal_column = goal_square
 
         # Move is illegal if goal square is more than one square away from start square
-        if abs(ord(goal_column) - ord(start_column)) > 1 or abs(goal_row - start_row) > 1:
+        if abs(goal_column - start_column) > 1 or abs(goal_row - start_row) > 1:
             print("A king can only move one square in any direction!\n")
             return False
 
