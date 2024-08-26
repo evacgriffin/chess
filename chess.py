@@ -15,11 +15,21 @@ class InvalidColorError(Exception):
 
 
 class Color(Enum):
-    """
-    Enumeration representing valid chess piece colors.
-    """
+    """Enumeration representing valid chess piece colors."""
     BLACK = 1
     WHITE = 2
+
+
+class ColumnLabels(Enum):
+    """Enumeration representing valid column labels of the chess board."""
+    a = 0
+    b = 1
+    c = 2
+    d = 3
+    e = 4
+    f = 5
+    g = 6
+    h = 7
 
 
 class ChessPiece(ABC):
@@ -58,7 +68,7 @@ class ChessPiece(ABC):
         return self._label
 
     @abstractmethod
-    def move_legal(self, start_square: str, goal_square: str, board: "Board") -> bool:
+    def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the piece's moveset and current state of the game board.
         Overridden in child classes.
@@ -601,39 +611,53 @@ class Board:
     the board. Also communicates with the ChessVar class to update its layout when needed.
     """
     # Explicitly specify expected types for the Board layout
-    _layout: list[dict[str, ChessPiece | None]]
-
-    # TODO: Replace _layout with list[list[...]].
-    # TODO: Replace `square: str` with `square: tuple[int, int]`.
+    _layout: list[list[ChessPiece | None]]
 
     def __init__(self) -> None:
         """
         Creates a new Board object.
-        The chess board is represented by a list of dictionaries.
-        Each row is a dictionary, where the keys are the square labels and the values are ChessPiece objects
-        If a square on the board is empty, its value is None
+        The chess board is represented by a list of lists.
+        Each sublist represents a row of the Board, containing ChessPiece objects.
+        The first sublist corresponds to row label 8 on the chess board.
+        The last sublist corresponds to row label 1 on the chess board.
+        The elements of each sublist represent columns labeled a - h on the chess board.
+        If a square on the board is empty, its value is None.
         """
         self._layout = [
-            {'a8': Rook(Color.BLACK), 'b8': Knight(Color.BLACK), 'c8': Bishop(Color.BLACK), 'd8': Queen(Color.BLACK),
-             'e8': King(Color.BLACK), 'f8': Bishop(Color.BLACK), 'g8': Knight(Color.BLACK), 'h8': Rook(Color.BLACK)},
-
-            {'a7': Pawn(Color.BLACK), 'b7': Pawn(Color.BLACK), 'c7': Pawn(Color.BLACK), 'd7': Pawn(Color.BLACK),
-             'e7': Pawn(Color.BLACK), 'f7': Pawn(Color.BLACK), 'g7': Pawn(Color.BLACK), 'h7': Pawn(Color.BLACK)},
-
-            {'a6': None, 'b6': None, 'c6': None, 'd6': None, 'e6': None, 'f6': None, 'g6': None, 'h6': None},
-
-            {'a5': None, 'b5': None, 'c5': None, 'd5': None, 'e5': None, 'f5': None, 'g5': None, 'h5': None},
-
-            {'a4': None, 'b4': None, 'c4': None, 'd4': None, 'e4': None, 'f4': None, 'g4': None, 'h4': None},
-
-            {'a3': None, 'b3': None, 'c3': None, 'd3': None, 'e3': None, 'f3': None, 'g3': None, 'h3': None},
-
-            {'a2': Pawn(Color.WHITE), 'b2': Pawn(Color.WHITE), 'c2': Pawn(Color.WHITE), 'd2': Pawn(Color.WHITE),
-             'e2': Pawn(Color.WHITE), 'f2': Pawn(Color.WHITE), 'g2': Pawn(Color.WHITE), 'h2': Pawn(Color.WHITE)},
-
-            {'a1': Rook(Color.WHITE), 'b1': Knight(Color.WHITE), 'c1': Bishop(Color.WHITE), 'd1': Queen(Color.WHITE),
-             'e1': King(Color.WHITE), 'f1': Bishop(Color.WHITE), 'g1': Knight(Color.WHITE), 'h1': Rook(Color.WHITE)}
+            [Rook(Color.BLACK), Knight(Color.BLACK), Bishop(Color.BLACK), Queen(Color.BLACK), King(Color.BLACK),
+             Bishop(Color.BLACK), Knight(Color.BLACK), Rook(Color.BLACK)],
+            [Pawn(Color.BLACK), Pawn(Color.BLACK), Pawn(Color.BLACK), Pawn(Color.BLACK), Pawn(Color.BLACK),
+             Pawn(Color.BLACK), Pawn(Color.BLACK), Pawn(Color.BLACK)],
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [Pawn(Color.WHITE), Pawn(Color.WHITE), Pawn(Color.WHITE), Pawn(Color.WHITE), Pawn(Color.WHITE),
+             Pawn(Color.WHITE), Pawn(Color.WHITE), Pawn(Color.WHITE)],
+            [Rook(Color.WHITE), Knight(Color.WHITE), Bishop(Color.WHITE), Queen(Color.WHITE), King(Color.WHITE),
+             Bishop(Color.WHITE), Knight(Color.WHITE), Rook(Color.WHITE)]
         ]
+        # self._layout = [
+        #     {'a8': Rook(Color.BLACK), 'b8': Knight(Color.BLACK), 'c8': Bishop(Color.BLACK), 'd8': Queen(Color.BLACK),
+        #      'e8': King(Color.BLACK), 'f8': Bishop(Color.BLACK), 'g8': Knight(Color.BLACK), 'h8': Rook(Color.BLACK)},
+        #
+        #     {'a7': Pawn(Color.BLACK), 'b7': Pawn(Color.BLACK), 'c7': Pawn(Color.BLACK), 'd7': Pawn(Color.BLACK),
+        #      'e7': Pawn(Color.BLACK), 'f7': Pawn(Color.BLACK), 'g7': Pawn(Color.BLACK), 'h7': Pawn(Color.BLACK)},
+        #
+        #     {'a6': None, 'b6': None, 'c6': None, 'd6': None, 'e6': None, 'f6': None, 'g6': None, 'h6': None},
+        #
+        #     {'a5': None, 'b5': None, 'c5': None, 'd5': None, 'e5': None, 'f5': None, 'g5': None, 'h5': None},
+        #
+        #     {'a4': None, 'b4': None, 'c4': None, 'd4': None, 'e4': None, 'f4': None, 'g4': None, 'h4': None},
+        #
+        #     {'a3': None, 'b3': None, 'c3': None, 'd3': None, 'e3': None, 'f3': None, 'g3': None, 'h3': None},
+        #
+        #     {'a2': Pawn(Color.WHITE), 'b2': Pawn(Color.WHITE), 'c2': Pawn(Color.WHITE), 'd2': Pawn(Color.WHITE),
+        #      'e2': Pawn(Color.WHITE), 'f2': Pawn(Color.WHITE), 'g2': Pawn(Color.WHITE), 'h2': Pawn(Color.WHITE)},
+        #
+        #     {'a1': Rook(Color.WHITE), 'b1': Knight(Color.WHITE), 'c1': Bishop(Color.WHITE), 'd1': Queen(Color.WHITE),
+        #      'e1': King(Color.WHITE), 'f1': Bishop(Color.WHITE), 'g1': Knight(Color.WHITE), 'h1': Rook(Color.WHITE)}
+        # ]
 
         self._width = 8
         self._height = 8
@@ -652,17 +676,14 @@ class Board:
         """
         return self._height
 
-    def get_current_piece_on_square(self, square: str) -> Optional[ChessPiece]:
+    def get_current_piece_on_square(self, square: tuple[int, int]) -> Optional[ChessPiece]:
         """
         Get the current chess piece on the specified square.
-        :param square: square as a two character string label
+        :param square: square as a tuple of two integers (row, column)
         :return: ChessPiece object currently located on square, None if the square is empty
         """
-        # Search for the specified square and return its associated chess piece
-        for row in self._layout:
-            for key, value in row.items():
-                if key == square:
-                    return value
+        row, col = square
+        return self._layout[row][col]
 
     def print(self) -> None:
         """
@@ -678,7 +699,7 @@ class Board:
         curr_row = self._height
         for row in self._layout:
             print(f"{curr_row} ", end='')
-            for piece in row.values():
+            for piece in row:
                 # If there is no piece on the square, print an underscore character
                 if not piece:
                     print(' _ ', end='')
@@ -695,63 +716,54 @@ class Board:
             print(f" {chr(val)} ", end='')
         print('\n\n')
 
-    def update_move(self, start_square: str, goal_square: str, piece: ChessPiece) -> None:
+    def update_move(self, start_square: tuple[int, int], goal_square: tuple[int, int], piece: ChessPiece) -> None:
         """
         Update the current state of the board by updating start_square to None (the piece was moved away from this
         square) and goal_square to the specified piece (the piece was moved here).
-        :param start_square: first square label as a two character string corresponding to dictionary key in the
-        board's layout
-        :param goal_square: second square label as a two character string corresponding to dictionary key in the
-        board's layout
+        :param start_square: first square as a tuple of two integers (row, column)
+        :param goal_square: second square as a tuple of two integers (row, column)
         :param piece: ChessPiece object to be placed on goal_square
         :return: No return value, the board layout is updated in place
         """
+        start_row, start_col = start_square
+        goal_row, goal_col = goal_square
+
         # Find start_square and update its value to None
-        for row in self._layout:
-            if start_square in row:
-                row[start_square] = None
-                break
+        self._layout[start_row][start_col] = None
 
         # Find goal_square and update its value to the ChessPiece object
-        for row in self._layout:
-            if goal_square in row:
-                row[goal_square] = piece
-                break
+        self._layout[goal_row][goal_col] = piece
 
-    def update_piece_entered(self, square: str, piece: ChessPiece) -> None:
+    def update_piece_entered(self, square: tuple[int, int], piece: ChessPiece) -> None:
         """
         Update the current state of the board by entering the specified piece on the specified square.
-        :param square: square label as a two character string
+        :param square: square as a tuple of two integers (row, column)
         :param piece: ChessPiece object to be placed on the specified square
         :return: No return value, the layout is updated in place
         """
-        for row in self._layout:
-            if square in row:
-                row[square] = piece
-                break
+        row, col = square
+        self._layout[row][col] = piece
 
 
-def diagonal_move_requires_jump(start_square: str, goal_square: str, board: Board) -> bool:
+def diagonal_move_requires_jump(start_square: tuple[int, int], goal_square: tuple[int, int], board: Board) -> bool:
     """
     Checks whether other pieces are in the way of a proposed diagonal move (if a move requires a jump).
-    :param start_square: the start position as a string
-    :param goal_square: the goal position as a string
+    :param start_square: the start position as a tuple of two integers (row, column)
+    :param goal_square: the goal position as a tuple of two integers (row, column)
     :param board: the game's board as a Board object
     :return:    Boolean:
                 True if the move requires a jump
                 False if move doesn't require a jump
     """
-    start_column = start_square[0]
-    start_row = int(start_square[1])
-    goal_column = goal_square[0]
-    goal_row = int(goal_square[1])
+    start_row, start_col = start_square
+    goal_row, goal_col = goal_square
 
     # Top right direction
-    if goal_row > start_row and goal_column > start_column:
-        current_column = ord(start_square[0]) + 1
-        current_row = int(start_square[1]) + 1
-        while current_row <= board.get_height() or current_column <= ord('h'):
-            current_square = chr(current_column) + str(current_row)
+    if goal_row > start_row and goal_col > start_col:
+        current_column = start_col + 1
+        current_row = start_row + 1
+        while current_row < board.get_height() or current_column < board.get_width():
+            current_square = current_row, current_column
             # If we reach the goal square, the move did not require any jumps
             if current_square == goal_square:
                 return False
@@ -759,15 +771,16 @@ def diagonal_move_requires_jump(start_square: str, goal_square: str, board: Boar
             # If we encounter another piece, the move requires a jump
             if board.get_current_piece_on_square(current_square):
                 return True
+
             current_row += 1
             current_column += 1
 
     # Bottom right direction
-    if goal_row < start_row and goal_column > start_column:
-        current_column = ord(start_square[0]) + 1
-        current_row = int(start_square[1]) - 1
-        while current_row >= 1 or current_column <= ord('h'):
-            current_square = chr(current_column) + str(current_row)
+    if goal_row < start_row and goal_col > start_col:
+        current_column = start_col + 1
+        current_row = start_row - 1
+        while current_row >= 0 or current_column < board.get_width():
+            current_square = current_row, current_column
             # If we reach the goal square, the move did not require any jumps
             if current_square == goal_square:
                 return False
@@ -775,15 +788,16 @@ def diagonal_move_requires_jump(start_square: str, goal_square: str, board: Boar
             # If we encounter another piece, the move requires a jump
             if board.get_current_piece_on_square(current_square):
                 return True
+
             current_row -= 1
             current_column += 1
 
     # Top left direction
-    if goal_row > start_row and goal_column < start_column:
-        current_column = ord(start_square[0]) - 1
-        current_row = int(start_square[1]) + 1
-        while current_row <= board.get_height() or current_column >= ord('a'):
-            current_square = chr(current_column) + str(current_row)
+    if goal_row > start_row and goal_col < start_col:
+        current_column = start_col - 1
+        current_row = start_row + 1
+        while current_row < board.get_height() or current_column >= 0:
+            current_square = current_row, current_column
             # If we reach the goal square, the move did not require any jumps
             if current_square == goal_square:
                 return False
@@ -791,15 +805,16 @@ def diagonal_move_requires_jump(start_square: str, goal_square: str, board: Boar
             # If we encounter another piece, the move requires a jump
             if board.get_current_piece_on_square(current_square):
                 return True
+
             current_row += 1
             current_column -= 1
 
     # Bottom left direction
-    if goal_row < start_row and goal_column < start_column:
-        current_column = ord(start_square[0]) - 1
-        current_row = int(start_square[1]) - 1
-        while current_row >= 1 or current_column >= ord('a'):
-            current_square = chr(current_column) + str(current_row)
+    if goal_row < start_row and goal_col < start_col:
+        current_column = start_col - 1
+        current_row = start_row - 1
+        while current_row >= 0 or current_column >= 0:
+            current_square = current_row, current_column
             # If we reach the goal square, the move did not require any jumps
             if current_square == goal_square:
                 return False
@@ -807,30 +822,29 @@ def diagonal_move_requires_jump(start_square: str, goal_square: str, board: Boar
             # If we encounter another piece, the move requires a jump
             if board.get_current_piece_on_square(current_square):
                 return True
+
             current_row -= 1
             current_column -= 1
 
 
-def straight_move_requires_jump(start_square: str, goal_square: str, board: Board) -> bool:
+def straight_move_requires_jump(start_square: tuple[int, int], goal_square: tuple[int, int], board: Board) -> bool:
     """
     Checks whether other pieces are in the way of a proposed up/down or left/right move (if a move requires a jump).
-    :param start_square: the start position as a string
-    :param goal_square: the goal position as a string
+    :param start_square: the start position as a tuple of two integers (row, column)
+    :param goal_square: the goal position as a tuple of two integers (row, column)
     :param board: the game's board as a Board object
     :return:    Boolean:
                 True if the move requires a jump
                 False if move doesn't require a jump
     """
-    start_column = start_square[0]
-    start_row = int(start_square[1])
-    goal_column = goal_square[0]
-    goal_row = int(goal_square[1])
+    start_row, start_col = start_square
+    goal_row, goal_col = goal_square
 
     # Up direction
     if goal_row > start_row:
         current_row = start_row + 1
-        while current_row <= board.get_height():
-            current_square = start_column + str(current_row)
+        while current_row < board.get_height():
+            current_square = current_row, start_col
             # If we reach the goal square, the move did not require any jumps
             if current_square == goal_square:
                 return False
@@ -838,26 +852,29 @@ def straight_move_requires_jump(start_square: str, goal_square: str, board: Boar
             # If we encounter another piece, the move requires a jump
             if board.get_current_piece_on_square(current_square):
                 return True
+
             current_row += 1
 
     # Down direction
     if goal_row < start_row:
         current_row = start_row - 1
-        while current_row >= 1:
-            current_square = start_column + str(current_row)
+        while current_row >= 0:
+            current_square = current_row, start_col
             # If we reach the goal square, the move did not require any jumps
             if current_square == goal_square:
                 return False
+
             # If we encounter another piece, the move requires a jump
             if board.get_current_piece_on_square(current_square):
                 return True
+
             current_row -= 1
 
     # Left direction
-    if goal_column < start_column:
-        current_column = ord(start_column) - 1
-        while current_column >= ord('a'):
-            current_square = chr(current_column) + str(start_row)
+    if goal_col < start_col:
+        current_column = start_col - 1
+        while current_column >= 0:
+            current_square = start_row, current_column
             # If we reach the goal square, the move did not require any jumps
             if current_square == goal_square:
                 return False
@@ -865,19 +882,22 @@ def straight_move_requires_jump(start_square: str, goal_square: str, board: Boar
             # If we encounter another piece, the move requires a jump
             if board.get_current_piece_on_square(current_square):
                 return True
+
             current_column -= 1
 
     # Right direction
-    if goal_column > start_column:
-        current_column = ord(start_column) + 1
-        while current_column <= ord('h'):
-            current_square = chr(current_column) + str(start_row)
+    if goal_col > start_col:
+        current_column = start_col + 1
+        while current_column < board.get_width():
+            current_square = start_row, current_column
             # If we reach the goal square, the move did not require any jumps
             if current_square == goal_square:
                 return False
+
             # If we encounter another piece, the move requires a jump
             if board.get_current_piece_on_square(current_square):
                 return True
+
             current_column += 1
 
 
@@ -951,6 +971,18 @@ class Player:
             print(captured_piece)
 
 
+def convert_to_tuple(square: str) -> tuple[int, int]:
+    """
+    Converts a user input string with formatting 'ColRow' to a tuple of two integers needed for the internal
+    implementation.
+    :param square: square as a string of two characters representing 'ColRow' on the chess board
+    :return: the specified square as a tuple of two integers (row, column)
+    """
+    column = ColumnLabels[square[0]].value
+    row = int(square[1])
+    return row, column
+
+
 class Chess:
     """
     Represents a falcon-hunter chess game with two players.
@@ -1015,14 +1047,15 @@ class Chess:
 
     def make_move(self, start_square: str, goal_square: str) -> bool:
         """
-        Moves a piece from start_square to goal_square.
+        Moves a piece from start_square to goal_square. Takes user entered strings as input and internally converts the
+        strings to a tuple of two integers as used by the board's layout.
+        This separates the user from the internal implementation.
         :param start_square: the start position as a string
         :param goal_square: the goal position as a string
         :return:    Boolean:
                     False if move is illegal or game has already been won
                     True if move is legal
         """
-
         # Check if move is legal:
         # Is the game over?
         if self._game_state != 'UNFINISHED':
@@ -1034,14 +1067,16 @@ class Chess:
             print("Moving from a square to itself is an illegal move.\n")
             return False
 
+        # Convert input strings to tuples
+        start_square = convert_to_tuple(start_square)
+        goal_square = convert_to_tuple(goal_square)
+
         # Is goal_square within the bounds of the game board?
-        # Board ranges: rows [1,8], columns [a,h]
-        column = goal_square[0]
-        row = int(goal_square[1])
-        if column < 'a' or column > 'h':
+        row, column = goal_square
+        if column < 0 or column > self._board.get_width() - 1:
             print("Column out of bounds! Cannot move chess piece off the board.\n")
             return False
-        if row < 1 or row > self._board.get_height():
+        if row < 0 or row > self._board.get_height() - 1:
             print("Row out of bounds! Cannot move chess piece off the board.\n")
             return False
 
