@@ -929,7 +929,7 @@ def convert_to_tuple(square: str) -> tuple[int, int]:
     :return: the specified square as a tuple of two integers (row, column)
     """
     column = ord(square[0]) - ord('a')
-    row = int(square[1])
+    row = 8 - int(square[1])
     return row, column
 
 
@@ -1108,16 +1108,16 @@ class Chess:
         self.go_to_next_turn()
         return True
 
-    def enter_fairy_piece(self, piece_type: str, square: tuple[int, int]) -> bool:
+    def enter_fairy_piece(self, piece_type: str, square: str) -> bool:
         """
         Enters the specified fairy piece into the game on the specified square.
         :param piece_type: fairy piece as a char
-        :param square: square to place the piece on as a tuple of integers (row, column)
+        :param square: square to place the piece on as a string label
         :return:    Boolean:
                     False if the piece is not allowed to enter this square at this turn
                     True if the piece can enter the specified square legally
         """
-        square_row, square_column = square
+        square_row = int(square[1])
 
         # Is the game over?
         if self._game_state != 'UNFINISHED':
