@@ -405,10 +405,8 @@ class Falcon(ChessPiece):
                     False if move is illegal
                     True if move is legal
         """
-        start_column = start_square[0]
-        start_row = int(start_square[1])
-        goal_column = goal_square[0]
-        goal_row = int(goal_square[1])
+        start_row, start_column = start_square
+        goal_row, goal_column = goal_square
 
         # Falcon's cannot move straight left or right
         if start_row == goal_row:
@@ -418,12 +416,12 @@ class Falcon(ChessPiece):
         # Checks for white pieces
         if self._color == Color.WHITE:
             # If we are trying to move backwards, but not within the same column, the move is illegal
-            if goal_row < start_row and ord(goal_column) != ord(start_column):
+            if goal_row < start_row and goal_column != start_column:
                 print("Falcons can only move straight backwards!\n")
                 return False
 
             # If we are trying to move forward, but not on a diagonal, the move is illegal
-            if goal_row > start_row and abs(ord(goal_column)-ord(start_column)) != abs(goal_row-start_row):
+            if goal_row > start_row and abs(goal_column - start_column) != abs(goal_row-start_row):
                 print("Falcons can only move diagonally forward!\n")
                 return False
 
@@ -450,12 +448,12 @@ class Falcon(ChessPiece):
         # Checks for black pieces
         if self._color == Color.BLACK:
             # If we are trying to move backwards, but not within the same column, the move is illegal
-            if goal_row > start_row and ord(goal_column) != ord(start_column):
+            if goal_row > start_row and goal_column != start_column:
                 print("Falcons can only move straight backwards!\n")
                 return False
 
             # If we are trying to move forward, but not on a diagonal, the move is illegal
-            if goal_row < start_row and abs(ord(goal_column) - ord(start_column)) != abs(goal_row - start_row):
+            if goal_row < start_row and abs(goal_column - start_column) != abs(goal_row - start_row):
                 print("Falcons can only move diagonally forward!\n")
                 return False
 
