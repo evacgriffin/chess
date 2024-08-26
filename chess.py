@@ -189,17 +189,15 @@ class Knight(ChessPiece):
                     False if move is illegal
                     True if move is legal
         """
-        start_column = start_square[0]
-        start_row = int(start_square[1])
-        goal_column = goal_square[0]
-        goal_row = int(goal_square[1])
+        start_row, start_column = start_square
+        goal_row, goal_column = goal_square
 
         # Can move one square left or right and two squares up or down
-        if abs(ord(goal_column) - ord(start_column)) == 1 and abs(goal_row - start_row) == 2:
+        if abs(goal_column - start_column) == 1 and abs(goal_row - start_row) == 2:
             return True
 
         # Can move two squares left or right and one square up or down
-        if abs(ord(goal_column) - ord(start_column)) == 2 and abs(goal_row - start_row) == 1:
+        if abs(goal_column - start_column) == 2 and abs(goal_row - start_row) == 1:
             return True
 
         # Otherwise, the move is not legal
