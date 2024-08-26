@@ -1029,18 +1029,20 @@ class Chess:
             print("Moving from a square to itself is an illegal move.\n")
             return False
 
+        # Is goal_square within the bounds of the game board?
+        # Board ranges: rows [1,8], columns [a,h]
+        column = goal_square[0]
+        row = int(goal_square[1])
+        if column < 'a' or column > 'h':
+            print("Column out of bounds! Cannot move chess piece off the board.\n")
+            return False
+        if row < 1 or row > self._board.get_height():
+            print("Row out of bounds! Cannot move chess piece off the board.\n")
+            return False
+
         # Convert input strings to tuples
         start_square = convert_to_tuple(start_square)
         goal_square = convert_to_tuple(goal_square)
-
-        # Is goal_square within the bounds of the game board?
-        row, column = goal_square
-        if column < 0 or column > self._board.get_width() - 1:
-            print("Column out of bounds! Cannot move chess piece off the board.\n")
-            return False
-        if row < 0 or row > self._board.get_height() - 1:
-            print("Row out of bounds! Cannot move chess piece off the board.\n")
-            return False
 
         piece_on_start_square = self._board.get_current_piece_on_square(start_square)
         # Does start_square contain a chess piece at all?
