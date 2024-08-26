@@ -155,7 +155,7 @@ class Knight(ChessPiece):
     """
     Represents a knight chess piece with a color and label.
     Responsible for ensuring that a knight can only attempt movements defined within its moveset.
-    Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
+    Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
     def __init__(self, color: Color, label: str = 'k') -> None:
@@ -197,7 +197,7 @@ class Bishop(ChessPiece):
     """
     Represents a bishop chess piece with a color and label.
     Responsible for ensuring that a bishop can only attempt movements defined within its moveset.
-    Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
+    Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
     def __init__(self, color: Color, label: str = 'b') -> None:
@@ -240,7 +240,7 @@ class Rook(ChessPiece):
     """
     Represents a rook chess piece with a color and label.
     Responsible for ensuring that a rook can only attempt movements defined within its moveset.
-    Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
+    Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
     def __init__(self, color: Color, label: str = 'r') -> None:
@@ -283,7 +283,7 @@ class Queen(ChessPiece):
     """
     Represents a queen chess piece with a color and label.
     Responsible for ensuring that a queen can only attempt movements defined within its moveset.
-    Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
+    Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
     def __init__(self, color: Color, label: str = 'q') -> None:
@@ -333,7 +333,7 @@ class King(ChessPiece):
     """
     Represents a king chess piece with a color and label.
     Responsible for ensuring that a king can only attempt movements defined within its moveset.
-    Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
+    Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
     def __init__(self, color: Color, label: str = 'g') -> None:
@@ -371,7 +371,7 @@ class Falcon(ChessPiece):
     """
     Represents a falcon chess piece with a color and label.
     Responsible for ensuring that a falcon can only attempt movements defined within its moveset.
-    Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
+    Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
     def __init__(self, color: Color, label: str = 'f') -> None:
@@ -473,7 +473,7 @@ class Hunter(ChessPiece):
     """
     Represents a hunter chess piece with a color and label.
     Responsible for ensuring that a hunter can only attempt movements defined within its moveset.
-    Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
+    Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
     def __init__(self, color: Color, label: str = 'h') -> None:
