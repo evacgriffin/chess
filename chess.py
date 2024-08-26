@@ -74,7 +74,7 @@ class Pawn(ChessPiece):
     """
     Represents a pawn chess piece with a color and label.
     Responsible for ensuring that a pawn can only attempt movements defined within its moveset.
-    Not responsible for checking other movement conditions. These checks are done by ChessVar instead.
+    Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     Communicates with the Board class to check for opposing chess pieces in diagonal forward directions.
     """
@@ -113,8 +113,8 @@ class Pawn(ChessPiece):
                 return False
 
         # Don't allow moving backwards or sideways
-        if ((self._color == Color.WHITE and goal_row < start_row)
-                or (self._color == Color.BLACK and goal_row > start_row)):
+        if ((self._color == Color.WHITE and goal_row > start_row)
+                or (self._color == Color.BLACK and goal_row < start_row)):
             print("Pawns cannot move backwards!\n")
             return False
         if goal_row == start_row:
@@ -1150,6 +1150,9 @@ class Chess:
             print(
                 "This player cannot enter a second fairy piece since they have not lost a second major piece yet!\n")
             return False
+
+        # Convert square label to tuple of integers
+        square = convert_to_tuple(square)
 
         piece_on_square = self._board.get_current_piece_on_square(square)
         # Does the specified square contain a chess piece already?
