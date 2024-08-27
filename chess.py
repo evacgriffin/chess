@@ -84,6 +84,7 @@ class Pawn(ChessPiece):
         :param color: piece color as a Color enumeration member
         :param label: piece label as a lowercase char
         """
+        # TODO: Pass 'p' directly instead of taking in a label param in the child class __init__.
         super().__init__(color, label)
         self._first_move = True  # Whether this is the pawn's first move
 
@@ -145,6 +146,7 @@ class Pawn(ChessPiece):
 
         # If we get to this point, the proposed move is legal
         # If it's the pawn's first move, set first move to False and return
+        # TODO: Move into abstractmethod because mutating state in a prepositional function is unexpected.
         if self._first_move:
             self._first_move = False
 
@@ -309,21 +311,21 @@ class Queen(ChessPiece):
         goal_row, goal_column = goal_square
 
         # We must check that we move either diagonally or straight up/down/left/right
-        if abs(goal_column - start_column) != abs(goal_row - start_row):
-            if goal_column != start_column and goal_row != start_row:
-                print("A queen can only move diagonally, or straight up, down, left or right!\n")
-                return False
+        if ((abs(goal_column - start_column) != abs(goal_row - start_row)) and
+                goal_column != start_column and goal_row != start_row):
+            print("A queen can only move diagonally, or straight up, down, left or right!\n")
+            return False
+
         # If a proposed diagonal move requires a jump, the move is illegal
-        else:
-            if diagonal_move_requires_jump(start_square, goal_square, board):
-                print("A queen cannot jump over other pieces!\n")
-                return False
+        if diagonal_move_requires_jump(start_square, goal_square, board):
+            print("A queen cannot jump over other pieces!\n")
+            return False
 
         # If a proposed straight move requires a jump, the move is illegal
-        if goal_column == start_column or goal_row == start_row:
-            if straight_move_requires_jump(start_square, goal_square, board):
-                print("A queen cannot jump over other pieces!\n")
-                return False
+        if ((goal_column == start_column or goal_row == start_row) and
+                straight_move_requires_jump(start_square, goal_square, board)):
+            print("A queen cannot jump over other pieces!\n")
+            return False
 
         # Otherwise, no jumps are required and the proposed move is legal
         return True
@@ -424,6 +426,7 @@ class Falcon(ChessPiece):
                 return True
 
             # If we are trying to move diagonally, we must check for jumps in that direction
+            # TODO: This check is unnecessary. Just do the inside anyway, because goal_row<start_row is always true at this point.
             if goal_row < start_row:
                 # If a proposed diagonal move requires a jump, the move is illegal
                 if diagonal_move_requires_jump(start_square, goal_square, board):
@@ -594,6 +597,9 @@ class Board:
         The elements of each sublist represent columns labeled a - h on the chess board.
         If a square on the board is empty, its value is None.
         """
+        # TODO:
+        #  b = Color.BLACK
+        #  w = Color.WHITE
         self._layout = [
             [Rook(Color.BLACK), Knight(Color.BLACK), Bishop(Color.BLACK), Queen(Color.BLACK), King(Color.BLACK),
              Bishop(Color.BLACK), Knight(Color.BLACK), Rook(Color.BLACK)],
@@ -640,6 +646,7 @@ class Board:
         Prints out the current layout of the board.
         :return: No return value
         """
+        # TODO: Make a constant like start_ord = ord('a')
         # Print column labels at the top
         print('  ', end='')
         for val in range(97, 97 + self._width):
@@ -707,6 +714,9 @@ def diagonal_move_requires_jump(start_square: tuple[int, int], goal_square: tupl
     """
     start_row, start_col = start_square
     goal_row, goal_col = goal_square
+
+    # TODO: Refactor using a unit vector to represent the search axis. Write a separate function for checking for pieces along the given axis. Use in both diagonal and straight.
+    #  Look up numpy vector to represent coordinates instead of tuple[int, int] so that you can do arithmetic.
 
     # Bottom right direction
     if goal_row > start_row and goal_col > start_col:
@@ -921,6 +931,9 @@ class Player:
             print(captured_piece)
 
 
+# TODO: Make parse_square/format_square methods on the Chess class.
+#  Parse: str -> coords
+#  Format: coords -> str
 def convert_to_tuple(square: str) -> tuple[int, int]:
     """
     Converts a user input string with formatting 'ColRow' to a tuple of two integers needed for the internal
@@ -995,6 +1008,9 @@ class Chess:
         """
         self._player_turn *= (-1)
 
+    # TODO: Take in coordinates instead of square strings. Decouple the frontend and backend as much as possible.
+    #  The UI should get data from the user and pass it to the engine in the format the engine understands, rather
+    #  than the engine trying to understand all possible UI formats. The same is true in the reverse direction.
     def make_move(self, start_square: str, goal_square: str) -> bool:
         """
         Moves a piece from start_square to goal_square. Takes user entered strings as input and internally converts the
