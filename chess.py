@@ -8,6 +8,8 @@ from collections.abc import Collection
 from enum import Enum
 from typing import Optional
 
+import numpy as np
+
 
 class InvalidColorError(Exception):
     """User-defined exception for invalid chess piece color."""
@@ -685,6 +687,36 @@ class Board:
         self._layout[row][col] = piece
 
 
+def traveling_on_axis_requires_jump(start_square: tuple[int, int], goal_square: tuple[int, int], board: Board,
+                                    axis: np.array) -> bool:
+    """
+    Checks whether other pieces are in the way when moving from the specified start square to the specified goal square
+    along the specified axis (if a move along the axis requires a jump).
+    :param start_square: the start position as a tuple of two integers (row, column)
+    :param goal_square: the goal position as a tuple of two integers (row, column)
+    :param board: the game's board as a Board object
+    :param axis: a numpy vector of two integers, represents unit vector of the movement direction (axis)
+    :return:    Boolean:
+                True if the move requires a jump
+                False if move doesn't require a jump
+    """
+    start_row, start_col = start_square
+    goal_row, goal_col = goal_square
+
+    current_square = np.array([start_row, start_col]) + axis
+    while 0 < current_square[0] < board.get_height() or 0 < current_square[1] < board.get_width():
+        # If we reach the goal square, the move did not require any jumps
+        if current_square[0] == goal_row and current_square[1] == goal_col:
+            return False
+
+        # If we encounter another piece, the move requires a jump
+        current_square_tuple = int(current_square[0]), int(current_square[1])
+        if board.get_current_piece_on_square(current_square_tuple):
+            return True
+
+        current_square += axis
+
+
 def diagonal_move_requires_jump(start_square: tuple[int, int], goal_square: tuple[int, int], board: Board) -> bool:
     """
     Checks whether other pieces are in the way of a proposed diagonal move (if a move requires a jump).
@@ -698,76 +730,21 @@ def diagonal_move_requires_jump(start_square: tuple[int, int], goal_square: tupl
     start_row, start_col = start_square
     goal_row, goal_col = goal_square
 
-    # TODO: Refactor using a unit vector to represent the search axis. Write a separate function for checking for pieces along the given axis. Use in both diagonal and straight.
-    #  Look up numpy vector to represent coordinates instead of tuple[int, int] so that you can do arithmetic.
-
     # Bottom right direction
     if goal_row > start_row and goal_col > start_col:
-        current_column = start_col + 1
-        current_row = start_row + 1
-        while current_row < board.get_height() or current_column < board.get_width():
-            current_square = current_row, current_column
-            # If we reach the goal square, the move did not require any jumps
-            if current_square == goal_square:
-                return False
-
-            # If we encounter another piece, the move requires a jump
-            if board.get_current_piece_on_square(current_square):
-                return True
-
-            current_row += 1
-            current_column += 1
+        return traveling_on_axis_requires_jump(start_square, goal_square, board, np.array([1, 1]))
 
     # Top right direction
     if goal_row < start_row and goal_col > start_col:
-        current_column = start_col + 1
-        current_row = start_row - 1
-        while current_row >= 0 or current_column < board.get_width():
-            current_square = current_row, current_column
-            # If we reach the goal square, the move did not require any jumps
-            if current_square == goal_square:
-                return False
-
-            # If we encounter another piece, the move requires a jump
-            if board.get_current_piece_on_square(current_square):
-                return True
-
-            current_row -= 1
-            current_column += 1
+        return traveling_on_axis_requires_jump(start_square, goal_square, board, np.array([-1, 1]))
 
     # Bottom left direction
     if goal_row > start_row and goal_col < start_col:
-        current_column = start_col - 1
-        current_row = start_row + 1
-        while current_row < board.get_height() or current_column >= 0:
-            current_square = current_row, current_column
-            # If we reach the goal square, the move did not require any jumps
-            if current_square == goal_square:
-                return False
-
-            # If we encounter another piece, the move requires a jump
-            if board.get_current_piece_on_square(current_square):
-                return True
-
-            current_row += 1
-            current_column -= 1
+        return traveling_on_axis_requires_jump(start_square, goal_square, board, np.array([1, -1]))
 
     # Top left direction
     if goal_row < start_row and goal_col < start_col:
-        current_column = start_col - 1
-        current_row = start_row - 1
-        while current_row >= 0 or current_column >= 0:
-            current_square = current_row, current_column
-            # If we reach the goal square, the move did not require any jumps
-            if current_square == goal_square:
-                return False
-
-            # If we encounter another piece, the move requires a jump
-            if board.get_current_piece_on_square(current_square):
-                return True
-
-            current_row -= 1
-            current_column -= 1
+        return traveling_on_axis_requires_jump(start_square, goal_square, board, np.array([-1, -1]))
 
 
 def straight_move_requires_jump(start_square: tuple[int, int], goal_square: tuple[int, int], board: Board) -> bool:
@@ -785,63 +762,19 @@ def straight_move_requires_jump(start_square: tuple[int, int], goal_square: tupl
 
     # Down direction
     if goal_row > start_row:
-        current_row = start_row + 1
-        while current_row < board.get_height():
-            current_square = current_row, start_col
-            # If we reach the goal square, the move did not require any jumps
-            if current_square == goal_square:
-                return False
-
-            # If we encounter another piece, the move requires a jump
-            if board.get_current_piece_on_square(current_square):
-                return True
-
-            current_row += 1
+        return traveling_on_axis_requires_jump(start_square, goal_square, board, np.array([1, 0]))
 
     # Up direction
     if goal_row < start_row:
-        current_row = start_row - 1
-        while current_row >= 0:
-            current_square = current_row, start_col
-            # If we reach the goal square, the move did not require any jumps
-            if current_square == goal_square:
-                return False
-
-            # If we encounter another piece, the move requires a jump
-            if board.get_current_piece_on_square(current_square):
-                return True
-
-            current_row -= 1
+        return traveling_on_axis_requires_jump(start_square, goal_square, board, np.array([-1, 0]))
 
     # Left direction
     if goal_col < start_col:
-        current_column = start_col - 1
-        while current_column >= 0:
-            current_square = start_row, current_column
-            # If we reach the goal square, the move did not require any jumps
-            if current_square == goal_square:
-                return False
-
-            # If we encounter another piece, the move requires a jump
-            if board.get_current_piece_on_square(current_square):
-                return True
-
-            current_column -= 1
+        return traveling_on_axis_requires_jump(start_square, goal_square, board, np.array([0, -1]))
 
     # Right direction
     if goal_col > start_col:
-        current_column = start_col + 1
-        while current_column < board.get_width():
-            current_square = start_row, current_column
-            # If we reach the goal square, the move did not require any jumps
-            if current_square == goal_square:
-                return False
-
-            # If we encounter another piece, the move requires a jump
-            if board.get_current_piece_on_square(current_square):
-                return True
-
-            current_column += 1
+        return traveling_on_axis_requires_jump(start_square, goal_square, board, np.array([0, 1]))
 
 
 class Player:
