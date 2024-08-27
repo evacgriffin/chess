@@ -600,6 +600,7 @@ class Board:
 
         self._width = 8
         self._height = 8
+        self._start_ord = ord('a')
 
     def get_width(self) -> int:
         """
@@ -629,10 +630,9 @@ class Board:
         Prints out the current layout of the board.
         :return: No return value
         """
-        # TODO: Make a constant like start_ord = ord('a')
         # Print column labels at the top
         print('  ', end='')
-        for val in range(97, 97 + self._width):
+        for val in range(self._start_ord, self._start_ord + self._width):
             print(f" {chr(val)} ", end='')
         print('\n')
 
@@ -652,7 +652,7 @@ class Board:
 
         # Print column labels at the bottom
         print('  ', end='')
-        for val in range(97, 97 + self._width):
+        for val in range(self._start_ord, self._start_ord + self._width):
             print(f" {chr(val)} ", end='')
         print('\n\n')
 
