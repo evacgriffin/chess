@@ -57,6 +57,23 @@ class ChessPiece(ABC):
         """
         return self._label
 
+    def get_first_move(self) -> bool:
+        """
+        Returns the piece's first_move value, specifying whether it is the piece's first move.
+        Overridden in child classes that have this data member.
+        :return:    Boolean:
+                    True if it is the piece's first move
+                    False otherwise
+        """
+        pass
+
+    def negate_first_move_flag(self):
+        """
+        Negates the value of _first_move. Overridden in child classes with this member.
+        :return: No return value, the data member is changed in place.
+        """
+        pass
+
     @abstractmethod
     def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
         """
@@ -87,6 +104,22 @@ class Pawn(ChessPiece):
         """
         super().__init__(color, 'p')
         self._first_move = True  # Whether this is the pawn's first move
+
+    def get_first_move(self) -> bool:
+        """
+        Returns the pawn's first_move value, specifying whether it is the pawn's first move.
+        :return:    Boolean:
+                    True if it is the pawn's first move
+                    False otherwise
+        """
+        return self._first_move
+
+    def negate_first_move_flag(self):
+        """
+        Negates the value of the _first_move private member.
+        :return: No return value, the data member is changed in place.
+        """
+        self._first_move = not self._first_move
 
     def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
         """
@@ -145,11 +178,6 @@ class Pawn(ChessPiece):
             return False
 
         # If we get to this point, the proposed move is legal
-        # If it's the pawn's first move, set first move to False and return
-        # TODO: Move into abstractmethod because mutating state in a prepositional function is unexpected.
-        if self._first_move:
-            self._first_move = False
-
         return True
 
 
@@ -1034,6 +1062,11 @@ class Chess:
 
         # Complete the move
         self._board.update_move(start_square, goal_square, piece_on_start_square)
+
+        # If the moved piece was a pawn, and it was the pawn's first turn, flip
+        # the first_move flag
+        if piece_on_start_square.get_label().lower() == 'p' and piece_on_start_square.get_first_move():
+            piece_on_start_square.negate_first_move_flag()
 
         # Print out the updated board and go to next turn
         self._board.print()
