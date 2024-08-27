@@ -585,22 +585,17 @@ class Board:
         The elements of each sublist represent columns labeled a - h on the chess board.
         If a square on the board is empty, its value is None.
         """
-        # TODO:
-        #  b = Color.BLACK
-        #  w = Color.WHITE
+        b = Color.BLACK
+        w = Color.WHITE
         self._layout = [
-            [Rook(Color.BLACK), Knight(Color.BLACK), Bishop(Color.BLACK), Queen(Color.BLACK), King(Color.BLACK),
-             Bishop(Color.BLACK), Knight(Color.BLACK), Rook(Color.BLACK)],
-            [Pawn(Color.BLACK), Pawn(Color.BLACK), Pawn(Color.BLACK), Pawn(Color.BLACK), Pawn(Color.BLACK),
-             Pawn(Color.BLACK), Pawn(Color.BLACK), Pawn(Color.BLACK)],
+            [Rook(b), Knight(b), Bishop(b), Queen(b), King(b), Bishop(b), Knight(b), Rook(b)],
+            [Pawn(b), Pawn(b), Pawn(b), Pawn(b), Pawn(b), Pawn(b), Pawn(b), Pawn(b)],
             [None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None],
             [None, None, None, None, None, None, None, None],
-            [Pawn(Color.WHITE), Pawn(Color.WHITE), Pawn(Color.WHITE), Pawn(Color.WHITE), Pawn(Color.WHITE),
-             Pawn(Color.WHITE), Pawn(Color.WHITE), Pawn(Color.WHITE)],
-            [Rook(Color.WHITE), Knight(Color.WHITE), Bishop(Color.WHITE), Queen(Color.WHITE), King(Color.WHITE),
-             Bishop(Color.WHITE), Knight(Color.WHITE), Rook(Color.WHITE)]
+            [Pawn(w), Pawn(w), Pawn(w), Pawn(w), Pawn(w), Pawn(w), Pawn(w), Pawn(w)],
+            [Rook(w), Knight(w), Bishop(w), Queen(w), King(w), Bishop(w), Knight(w), Rook(w)]
         ]
 
         self._width = 8
