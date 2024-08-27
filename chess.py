@@ -426,15 +426,12 @@ class Falcon(ChessPiece):
                 return True
 
             # If we are trying to move diagonally, we must check for jumps in that direction
-            # TODO: This check is unnecessary. Just do the inside anyway, because goal_row<start_row is always true at this point.
-            if goal_row < start_row:
-                # If a proposed diagonal move requires a jump, the move is illegal
-                if diagonal_move_requires_jump(start_square, goal_square, board):
-                    print("A falcon cannot jump over other pieces!\n")
-                    return False
-
-                # Otherwise, no jumps are required and the proposed move is legal
-                return True
+            # If a proposed diagonal move requires a jump, the move is illegal
+            if diagonal_move_requires_jump(start_square, goal_square, board):
+                print("A falcon cannot jump over other pieces!\n")
+                return False
+            # Otherwise, no jumps are required and the proposed move is legal
+            return True
 
         # Checks for black pieces
         if self._color == Color.BLACK:
