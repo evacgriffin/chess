@@ -78,14 +78,12 @@ class Pawn(ChessPiece):
     Inherits from ChessPiece.
     Communicates with the Board class to check for opposing chess pieces in diagonal forward directions.
     """
-    def __init__(self, color: Color, label: str = 'p') -> None:
+    def __init__(self, color: Color) -> None:
         """
         Creates a new Pawn object with the specified color and label.
         :param color: piece color as a Color enumeration member
-        :param label: piece label as a lowercase char
         """
-        # TODO: Pass 'p' directly instead of taking in a label param in the child class __init__.
-        super().__init__(color, label)
+        super().__init__(color, 'p')
         self._first_move = True  # Whether this is the pawn's first move
 
     def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
@@ -160,13 +158,12 @@ class Knight(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color: Color, label: str = 'k') -> None:
+    def __init__(self, color: Color) -> None:
         """
         Creates a new Knight object with the specified color and label.
         :param color: piece color as a Color enumeration member
-        :param label: piece label as a lowercase char
         """
-        super().__init__(color, label)
+        super().__init__(color, 'k')
 
     def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
         """
@@ -202,13 +199,12 @@ class Bishop(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color: Color, label: str = 'b') -> None:
+    def __init__(self, color: Color) -> None:
         """
         Creates a new Bishop object with the specified color and label.
         :param color: piece color as a Color enumeration member
-        :param label: piece label as a lowercase char
         """
-        super().__init__(color, label)
+        super().__init__(color, 'b')
 
     def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
         """
@@ -245,13 +241,12 @@ class Rook(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color: Color, label: str = 'r') -> None:
+    def __init__(self, color: Color) -> None:
         """
         Creates a new Rook object with the specified color and label.
         :param color: piece color as a Color enumeration member
-        :param label: piece label as a lowercase char
         """
-        super().__init__(color, label)
+        super().__init__(color, 'r')
 
     def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
         """
@@ -288,13 +283,12 @@ class Queen(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color: Color, label: str = 'q') -> None:
+    def __init__(self, color: Color) -> None:
         """
         Creates a new Queen object with the specified color and label.
         :param color: piece color as a Color enumeration member
-        :param label: piece label as a lowercase char
         """
-        super().__init__(color, label)
+        super().__init__(color, 'q')
 
     def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
         """
@@ -338,13 +332,12 @@ class King(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color: Color, label: str = 'g') -> None:
+    def __init__(self, color: Color) -> None:
         """
         Creates a new King object with the specified color and label.
         :param color: piece color as a Color enumeration member
-        :param label: piece label as a lowercase char
         """
-        super().__init__(color, label)
+        super().__init__(color, 'g')
 
     def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
         """
@@ -376,13 +369,12 @@ class Falcon(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color: Color, label: str = 'f') -> None:
+    def __init__(self, color: Color) -> None:
         """
         Creates a new Falcon object with the specified color and label.
         :param color: piece color as a Color enumeration member
-        :param label: piece label as a lowercase char
         """
-        super().__init__(color, label)
+        super().__init__(color, 'f')
 
     def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
         """
@@ -476,13 +468,12 @@ class Hunter(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
-    def __init__(self, color: Color, label: str = 'h') -> None:
+    def __init__(self, color: Color) -> None:
         """
         Creates a new Hunter object with the specified color and label.
         :param color: piece color as a Color enumeration member
-        :param label: piece label as a lowercase char
         """
-        super().__init__(color, label)
+        super().__init__(color, 'h')
 
     def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
         """
