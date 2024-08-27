@@ -75,12 +75,12 @@ class ChessPiece(ABC):
         pass
 
     @abstractmethod
-    def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
+    def move_legal(self, start_square: np.array, goal_square: np.array, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the piece's moveset and current state of the game board.
         Overridden in child classes.
-        :param start_square: the start position as a tuple of integers (row, column)
-        :param goal_square: the goal position as a tuple of integers (row, column)
+        :param start_square: the start position as a vector [row, column]
+        :param goal_square: the goal position as a vector [row, column]
         :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
@@ -121,42 +121,41 @@ class Pawn(ChessPiece):
         """
         self._first_move = not self._first_move
 
-    def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
+    def move_legal(self, start_square: np.array, goal_square: np.array, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the pawn's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
-        :param start_square: the start position as a tuple of integers (row, column)
-        :param goal_square: the goal position as a tuple of integers (row, column)
+        :param start_square: the start position as a vector [row, column]
+        :param goal_square: the goal position as a vector [row, column]
         :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
                     True if move is legal
         """
-        start_row, start_column = start_square
-        goal_row, goal_column = goal_square
-
         # Check movement on first turn
         if self._first_move:
             # Don't allow moving forward more than 2 spaces
-            if abs(goal_row - start_row) > 2:
+            if abs(goal_square[0] - start_square[0]) > 2:
                 print("Pawns cannot move more than 2 spaces forward on their first turn!\n")
                 return False
+
             # Don't allow jumping over another piece
-            if goal_column == start_column and straight_move_requires_jump(start_square, goal_square, board):
+            if goal_square[1] == start_square[1] and straight_move_requires_jump(start_square, goal_square, board):
                 print("Pawns cannot jump over other pieces.\n")
                 return False
 
         # Don't allow moving backwards or sideways
-        if ((self._color == Color.WHITE and goal_row > start_row)
-                or (self._color == Color.BLACK and goal_row < start_row)):
+        if ((self._color == Color.WHITE and goal_square[0] > start_square[0])
+                or (self._color == Color.BLACK and goal_square[0] < start_square[0])):
             print("Pawns cannot move backwards!\n")
             return False
-        if goal_row == start_row:
+
+        if goal_square[0] == start_square[0]:
             print("Pawns cannot move sideways!\n")
             return False
 
         # Check forward movement after the first turn
-        if not self._first_move and goal_column == start_column and abs(goal_row - start_row) > 1:
+        if not self._first_move and goal_square[1] == start_square[1] and abs(goal_square[0] - start_square[0]) > 1:
             print("Pawns cannot move more than 1 space forward after their first turn!\n")
             return False
 
@@ -164,16 +163,17 @@ class Pawn(ChessPiece):
         piece_on_goal_square = board.get_current_piece_on_square(goal_square)
 
         # Don't allow moving straight forward onto a square with another piece
-        if start_column == goal_column and piece_on_goal_square:
+        if start_square[1] == goal_square[1] and piece_on_goal_square:
             print("Pawns cannot capture by moving straight forward.\n")
             return False
 
         # Don't allow diagonal movement to columns more than 1 square away
-        if abs(start_column - goal_column) > 1:
+        if abs(start_square[1] - goal_square[1]) > 1:
             print("Pawns cannot move more than one square diagonally.\n")
             return False
+
         # Don't allow diagonal movement to empty squares
-        if abs(start_column - goal_column) == 1 and not piece_on_goal_square:
+        if abs(start_square[1] - goal_square[1]) == 1 and not piece_on_goal_square:
             print("Pawns cannot move diagonally to an empty square.\n")
             return False
 
@@ -195,26 +195,23 @@ class Knight(ChessPiece):
         """
         super().__init__(color, 'k')
 
-    def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
+    def move_legal(self, start_square: np.array, goal_square: np.array, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the knight's moveset.
         Knights are allowed to jump over other pieces.
-        :param start_square: the start position as a tuple of integers (row, column)
-        :param goal_square: the goal position as a tuple of integers (row, column)
+        :param start_square: the start position as a vector [row, column]
+        :param goal_square: the goal position as a vector [row, column]
         :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
                     True if move is legal
         """
-        start_row, start_column = start_square
-        goal_row, goal_column = goal_square
-
         # Can move one square left or right and two squares up or down
-        if abs(goal_column - start_column) == 1 and abs(goal_row - start_row) == 2:
+        if abs(goal_square[1] - start_square[1]) == 1 and abs(goal_square[0] - start_square[0]) == 2:
             return True
 
         # Can move two squares left or right and one square up or down
-        if abs(goal_column - start_column) == 2 and abs(goal_row - start_row) == 1:
+        if abs(goal_square[1] - start_square[1]) == 2 and abs(goal_square[0] - start_square[0]) == 1:
             return True
 
         # Otherwise, the move is not legal
@@ -236,22 +233,19 @@ class Bishop(ChessPiece):
         """
         super().__init__(color, 'b')
 
-    def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
+    def move_legal(self, start_square: np.array, goal_square: np.array, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the bishop's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
-        :param start_square: the start position as a tuple of integers (row, column)
-        :param goal_square: the goal position as a tuple of integers (row, column)
+        :param start_square: the start position as a vector [row, column]
+        :param goal_square: the goal position as a vector [row, column]
         :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
                     True if move is legal
         """
-        start_row, start_column = start_square
-        goal_row, goal_column = goal_square
-
         # We must check that we move the same number horizontally as vertically to reach goal square
-        if abs(goal_column - start_column) != abs(goal_row - start_row):
+        if abs(goal_square[1] - start_square[1]) != abs(goal_square[0] - start_square[0]):
             print("Bishops can only move diagonally!\n")
             return False
 
@@ -278,22 +272,19 @@ class Rook(ChessPiece):
         """
         super().__init__(color, 'r')
 
-    def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
+    def move_legal(self, start_square: np.array, goal_square: np.array, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the rook's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
-        :param start_square: the start position as a tuple of integers (row, column)
-        :param goal_square: the goal position as a tuple of integers (row, column)
+        :param start_square: the start position as a vector [row, column]
+        :param goal_square: the goal position as a vector [row, column]
         :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
                     True if move is legal
         """
-        start_row, start_column = start_square
-        goal_row, goal_column = goal_square
-
         # Is goal_square on the same column or row as start_square?
-        if goal_column != start_column and goal_row != start_row:
+        if goal_square[1] != start_square[1] and goal_square[0] != start_square[0]:
             print("Rooks can only move horizontally or vertically!\n")
             return False
 
@@ -320,23 +311,20 @@ class Queen(ChessPiece):
         """
         super().__init__(color, 'q')
 
-    def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
+    def move_legal(self, start_square: np.array, goal_square: np.array, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the queen's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
-        :param start_square: the start position as a tuple of integers (row, column)
-        :param goal_square: the goal position as a tuple of integers (row, column)
+        :param start_square: the start position as a vector [row, column]
+        :param goal_square: the goal position as a vector [row, column]
         :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
                     True if move is legal
         """
-        start_row, start_column = start_square
-        goal_row, goal_column = goal_square
-
         # We must check that we move either diagonally or straight up/down/left/right
-        if ((abs(goal_column - start_column) != abs(goal_row - start_row)) and
-                goal_column != start_column and goal_row != start_row):
+        if ((abs(goal_square[1] - start_square[1]) != abs(goal_square[0] - start_square[0])) and
+                goal_square[1] != start_square[1] and goal_square[0] != start_square[0]):
             print("A queen can only move diagonally, or straight up, down, left or right!\n")
             return False
 
@@ -346,7 +334,7 @@ class Queen(ChessPiece):
             return False
 
         # If a proposed straight move requires a jump, the move is illegal
-        if ((goal_column == start_column or goal_row == start_row) and
+        if ((goal_square[1] == start_square[1] or goal_square[0] == start_square[0]) and
                 straight_move_requires_jump(start_square, goal_square, board)):
             print("A queen cannot jump over other pieces!\n")
             return False
@@ -369,22 +357,19 @@ class King(ChessPiece):
         """
         super().__init__(color, 'g')
 
-    def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
+    def move_legal(self, start_square: np.array, goal_square: np.array, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the king's moveset.
         Since a king can only move one space in each direction, we do not have to check for jumps.
-        :param start_square: the start position as a tuple of integers (row, column)
-        :param goal_square: the goal position as a tuple of integers (row, column)
+        :param start_square: the start position as a vector [row, column]
+        :param goal_square: the goal position as a vector [row, column]
         :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
                     True if move is legal
         """
-        start_row, start_column = start_square
-        goal_row, goal_column = goal_square
-
         # Move is illegal if goal square is more than one square away from start square
-        if abs(goal_column - start_column) > 1 or abs(goal_row - start_row) > 1:
+        if abs(goal_square[1] - start_square[1]) > 1 or abs(goal_square[0] - start_square[0]) > 1:
             print("A king can only move one square in any direction!\n")
             return False
 
@@ -406,39 +391,37 @@ class Falcon(ChessPiece):
         """
         super().__init__(color, 'f')
 
-    def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
+    def move_legal(self, start_square: np.array, goal_square: np.array, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the falcon's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
-        :param start_square: the start position as a tuple of integers (row, column)
-        :param goal_square: the goal position as a tuple of integers (row, column)
+        :param start_square: the start position as a vector [row, column]
+        :param goal_square: the goal position as a vector [row, column]
         :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
                     True if move is legal
         """
-        start_row, start_column = start_square
-        goal_row, goal_column = goal_square
-
         # Falcon's cannot move straight left or right
-        if start_row == goal_row:
+        if start_square[0] == goal_square[0]:
             print("Falcons cannot move straight left or right!\n")
             return False
 
         # Checks for white pieces
         if self._color == Color.WHITE:
             # If we are trying to move backwards, but not within the same column, the move is illegal
-            if goal_row > start_row and goal_column != start_column:
+            if goal_square[0] > start_square[0] and goal_square[1] != start_square[1]:
                 print("Falcons can only move straight backwards!\n")
                 return False
 
             # If we are trying to move forward, but not on a diagonal, the move is illegal
-            if goal_row < start_row and abs(goal_column - start_column) != abs(goal_row-start_row):
+            if (goal_square[0] < start_square[0] and
+                    abs(goal_square[1] - start_square[1]) != abs(goal_square[0] - start_square[0])):
                 print("Falcons can only move diagonally forward!\n")
                 return False
 
             # If we are trying to move backwards, we must check for jumps in that direction
-            if goal_row > start_row:
+            if goal_square[0] > start_square[0]:
                 # If a proposed straight move requires a jump, the move is illegal
                 if straight_move_requires_jump(start_square, goal_square, board):
                     print("A falcon cannot jump over other pieces!\n")
@@ -452,23 +435,25 @@ class Falcon(ChessPiece):
             if diagonal_move_requires_jump(start_square, goal_square, board):
                 print("A falcon cannot jump over other pieces!\n")
                 return False
+
             # Otherwise, no jumps are required and the proposed move is legal
             return True
 
         # Checks for black pieces
         if self._color == Color.BLACK:
             # If we are trying to move backwards, but not within the same column, the move is illegal
-            if goal_row < start_row and goal_column != start_column:
+            if goal_square[0] < start_square[0] and goal_square[1] != start_square[1]:
                 print("Falcons can only move straight backwards!\n")
                 return False
 
             # If we are trying to move forward, but not on a diagonal, the move is illegal
-            if goal_row > start_row and abs(goal_column - start_column) != abs(goal_row - start_row):
+            if (goal_square[0] > start_square[0] and
+                    abs(goal_square[1] - start_square[1]) != abs(goal_square[0] - start_square[0])):
                 print("Falcons can only move diagonally forward!\n")
                 return False
 
             # If we are trying to move backwards, we must check for jumps in that direction
-            if goal_row < start_row:
+            if goal_square[0] < start_square[0]:
                 # If a proposed straight move requires a jump, the move is illegal
                 if straight_move_requires_jump(start_square, goal_square, board):
                     print("A falcon cannot jump over other pieces!\n")
@@ -478,7 +463,7 @@ class Falcon(ChessPiece):
                 return True
 
             # If we are trying to move diagonally, we must check for jumps in that direction
-            if goal_row > start_row:
+            if goal_square[0] > start_square[0]:
                 # If a proposed diagonal move requires a jump, the move is illegal
                 if diagonal_move_requires_jump(start_square, goal_square, board):
                     print("A falcon cannot jump over other pieces!\n")
@@ -505,39 +490,37 @@ class Hunter(ChessPiece):
         """
         super().__init__(color, 'h')
 
-    def move_legal(self, start_square: tuple[int, int], goal_square: tuple[int, int], board: "Board") -> bool:
+    def move_legal(self, start_square: np.array, goal_square: np.array, board: "Board") -> bool:
         """
         Check if a proposed move is legal according to the hunter's moveset and current state of the game board.
         This method also verifies if any other pieces are in the way of the proposed move.
-        :param start_square: the start position as a tuple of integers (row, column)
-        :param goal_square: the goal position as a tuple of integers (row, column)
+        :param start_square: the start position as a vector [row, column]
+        :param goal_square: the goal position as a vector [row, column]
         :param board: the game's board as a Board object
         :return:    Boolean:
                     False if move is illegal
                     True if move is legal
         """
-        start_row, start_column = start_square
-        goal_row, goal_column = goal_square
-
         # Hunter's cannot move straight left or right
-        if start_row == goal_row:
+        if start_square[0] == goal_square[0]:
             print("Hunters cannot move straight left or right!\n")
             return False
 
         # Checks for white pieces
         if self._color == Color.WHITE:
             # If we are trying to move forward, but not within the same column, the move is illegal
-            if goal_row < start_row and goal_column != start_column:
+            if goal_square[0] < start_square[0] and goal_square[1] != start_square[1]:
                 print("Hunters can only move straight forward!\n")
                 return False
 
             # If we are trying to move backward, but not on a diagonal, the move is illegal
-            if goal_row > start_row and abs(goal_column - start_column) != abs(goal_row - start_row):
+            if (goal_square[0] > start_square[0] and
+                    abs(goal_square[1] - start_square[1]) != abs(goal_square[0] - start_square[0])):
                 print("Hunters can only move diagonally backward!\n")
                 return False
 
             # If we are trying to move forward, we must check for jumps in that direction
-            if goal_row < start_row:
+            if goal_square[0] < start_square[0]:
                 # If a proposed straight move requires a jump, the move is illegal
                 if straight_move_requires_jump(start_square, goal_square, board):
                     print("A hunter cannot jump over other pieces!\n")
@@ -547,7 +530,7 @@ class Hunter(ChessPiece):
                 return True
 
             # If we are trying to move backward, we must check for jumps in that direction
-            if goal_row > start_row:
+            if goal_square[0] > start_square[0]:
                 # If a proposed diagonal move requires a jump, the move is illegal
                 if diagonal_move_requires_jump(start_square, goal_square, board):
                     print("A hunter cannot jump over other pieces!\n")
@@ -559,17 +542,18 @@ class Hunter(ChessPiece):
         # Checks for black pieces
         if self._color == Color.BLACK:
             # If we are trying to move forward, but not within the same column, the move is illegal
-            if goal_row > start_row and goal_column != start_column:
+            if goal_square[0] > start_square[0] and goal_square[1] != start_square[1]:
                 print("Hunters can only move straight forward!\n")
                 return False
 
             # If we are trying to move backward, but not on a diagonal, the move is illegal
-            if goal_row < start_row and abs(goal_column - start_column) != abs(goal_row - start_row):
+            if (goal_square[0] < start_square[0] and
+                    abs(goal_square[1] - start_square[1]) != abs(goal_square[0] - start_square[0])):
                 print("Hunters can only move diagonally backward!\n")
                 return False
 
             # If we are trying to move forward, we must check for jumps in that direction
-            if goal_row > start_row:
+            if goal_square[0] > start_square[0]:
                 # If a proposed straight move requires a jump, the move is illegal
                 if straight_move_requires_jump(start_square, goal_square, board):
                     print("A hunter cannot jump over other pieces!\n")
@@ -579,7 +563,7 @@ class Hunter(ChessPiece):
                 return True
 
             # If we are trying to move backward, we must check for jumps in that direction
-            if goal_row < start_row:
+            if goal_square[0] < start_square[0]:
                 # If a proposed diagonal move requires a jump, the move is illegal
                 if diagonal_move_requires_jump(start_square, goal_square, board):
                     print("A hunter cannot jump over other pieces!\n")
@@ -646,14 +630,13 @@ class Board:
         """
         return self._height
 
-    def get_current_piece_on_square(self, square: tuple[int, int]) -> Optional[ChessPiece]:
+    def get_current_piece_on_square(self, square: np.array) -> Optional[ChessPiece]:
         """
         Get the current chess piece on the specified square.
-        :param square: square as a tuple of two integers (row, column)
+        :param square: square as a vector [row, column]
         :return: ChessPiece object currently located on square, None if the square is empty
         """
-        row, col = square
-        return self._layout[row][col]
+        return self._layout[square[0]][square[1]]
 
     def print(self) -> None:
         """
@@ -686,55 +669,46 @@ class Board:
             print(f" {chr(val)} ", end='')
         print('\n\n')
 
-    def update_move(self, start_square: tuple[int, int], goal_square: tuple[int, int], piece: ChessPiece) -> None:
+    def update_move(self, start_square: np.array, goal_square: np.array, piece: ChessPiece) -> None:
         """
         Update the current state of the board by updating start_square to None (the piece was moved away from this
         square) and goal_square to the specified piece (the piece was moved here).
-        :param start_square: first square as a tuple of two integers (row, column)
-        :param goal_square: second square as a tuple of two integers (row, column)
+        :param start_square: first square as a vector [row, column]
+        :param goal_square: second square as a vector [row, column]
         :param piece: ChessPiece object to be placed on goal_square
         :return: No return value, the board layout is updated in place
         """
-        start_row, start_col = start_square
-        goal_row, goal_col = goal_square
+        self._layout[start_square[0]][start_square[1]] = None
 
-        # Find start_square and update its value to None
-        self._layout[start_row][start_col] = None
+        self._layout[goal_square[0]][goal_square[1]] = piece
 
-        # Find goal_square and update its value to the ChessPiece object
-        self._layout[goal_row][goal_col] = piece
-
-    def update_piece_entered(self, square: tuple[int, int], piece: ChessPiece) -> None:
+    def update_piece_entered(self, square: np.array, piece: ChessPiece) -> None:
         """
         Update the current state of the board by entering the specified piece on the specified square.
-        :param square: square as a tuple of two integers (row, column)
+        :param square: square as a vector [row, column]
         :param piece: ChessPiece object to be placed on the specified square
         :return: No return value, the layout is updated in place
         """
-        row, col = square
-        self._layout[row][col] = piece
+        self._layout[square[0]][square[1]] = piece
 
 
-def traveling_on_axis_requires_jump(start_square: tuple[int, int], goal_square: tuple[int, int], board: Board,
+def traveling_on_axis_requires_jump(start_square: np.array, goal_square: np.array, board: Board,
                                     axis: np.array) -> bool:
     """
     Checks whether other pieces are in the way when moving from the specified start square to the specified goal square
     along the specified axis (if a move along the axis requires a jump).
-    :param start_square: the start position as a tuple of two integers (row, column)
-    :param goal_square: the goal position as a tuple of two integers (row, column)
+    :param start_square: the start position as a vector [row, column]
+    :param goal_square: the goal position as a vector [row, column]
     :param board: the game's board as a Board object
-    :param axis: a numpy vector of two integers, represents unit vector of the movement direction (axis)
+    :param axis: directional axis as a unit vector [x direction, y direction]
     :return:    Boolean:
                 True if the move requires a jump
                 False if move doesn't require a jump
     """
-    start_row, start_col = start_square
-    goal_row, goal_col = goal_square
-
-    current_square = np.array([start_row, start_col]) + axis
+    current_square = start_square + axis
     while 0 < current_square[0] < board.get_height() or 0 < current_square[1] < board.get_width():
         # If we reach the goal square, the move did not require any jumps
-        if current_square[0] == goal_row and current_square[1] == goal_col:
+        if current_square[0] == goal_square[0] and current_square[1] == goal_square[1]:
             return False
 
         # If we encounter another piece, the move requires a jump
@@ -745,63 +719,57 @@ def traveling_on_axis_requires_jump(start_square: tuple[int, int], goal_square: 
         current_square += axis
 
 
-def diagonal_move_requires_jump(start_square: tuple[int, int], goal_square: tuple[int, int], board: Board) -> bool:
+def diagonal_move_requires_jump(start_square: np.array, goal_square: np.array, board: Board) -> bool:
     """
     Checks whether other pieces are in the way of a proposed diagonal move (if a move requires a jump).
-    :param start_square: the start position as a tuple of two integers (row, column)
-    :param goal_square: the goal position as a tuple of two integers (row, column)
+    :param start_square: the start position as a vector [row, column]
+    :param goal_square: the goal position as a vector [row, column]
     :param board: the game's board as a Board object
     :return:    Boolean:
                 True if the move requires a jump
                 False if move doesn't require a jump
     """
-    start_row, start_col = start_square
-    goal_row, goal_col = goal_square
-
     # Bottom right direction
-    if goal_row > start_row and goal_col > start_col:
+    if goal_square[0] > start_square[0] and goal_square[1] > start_square[1]:
         return traveling_on_axis_requires_jump(start_square, goal_square, board, np.array([1, 1]))
 
     # Top right direction
-    if goal_row < start_row and goal_col > start_col:
+    if goal_square[0] < start_square[0] and goal_square[1] > start_square[1]:
         return traveling_on_axis_requires_jump(start_square, goal_square, board, np.array([-1, 1]))
 
     # Bottom left direction
-    if goal_row > start_row and goal_col < start_col:
+    if goal_square[0] > start_square[0] and goal_square[1] < start_square[1]:
         return traveling_on_axis_requires_jump(start_square, goal_square, board, np.array([1, -1]))
 
     # Top left direction
-    if goal_row < start_row and goal_col < start_col:
+    if goal_square[0] < start_square[0] and goal_square[1] < start_square[1]:
         return traveling_on_axis_requires_jump(start_square, goal_square, board, np.array([-1, -1]))
 
 
-def straight_move_requires_jump(start_square: tuple[int, int], goal_square: tuple[int, int], board: Board) -> bool:
+def straight_move_requires_jump(start_square: np.array, goal_square: np.array, board: Board) -> bool:
     """
     Checks whether other pieces are in the way of a proposed up/down or left/right move (if a move requires a jump).
-    :param start_square: the start position as a tuple of two integers (row, column)
-    :param goal_square: the goal position as a tuple of two integers (row, column)
+    :param start_square: the start position as a vector [row, column]
+    :param goal_square: the goal position as a vector [row, column]
     :param board: the game's board as a Board object
     :return:    Boolean:
                 True if the move requires a jump
                 False if move doesn't require a jump
     """
-    start_row, start_col = start_square
-    goal_row, goal_col = goal_square
-
     # Down direction
-    if goal_row > start_row:
+    if goal_square[0] > start_square[0]:
         return traveling_on_axis_requires_jump(start_square, goal_square, board, np.array([1, 0]))
 
     # Up direction
-    if goal_row < start_row:
+    if goal_square[0] < start_square[0]:
         return traveling_on_axis_requires_jump(start_square, goal_square, board, np.array([-1, 0]))
 
     # Left direction
-    if goal_col < start_col:
+    if goal_square[1] < start_square[1]:
         return traveling_on_axis_requires_jump(start_square, goal_square, board, np.array([0, -1]))
 
     # Right direction
-    if goal_col > start_col:
+    if goal_square[1] > start_square[1]:
         return traveling_on_axis_requires_jump(start_square, goal_square, board, np.array([0, 1]))
 
 
@@ -878,16 +846,16 @@ class Player:
 # TODO: Make parse_square/format_square methods on the Chess class.
 #  Parse: str -> coords
 #  Format: coords -> str
-def convert_to_tuple(square: str) -> tuple[int, int]:
+def convert_to_tuple(square: str) -> np.array:
     """
-    Converts a user input string with formatting 'ColRow' to a tuple of two integers needed for the internal
+    Converts a user input string with formatting 'ColRow' to a numpy vector of two integers needed for the internal
     implementation.
     :param square: square as a string of two characters representing 'ColRow' on the chess board
-    :return: the specified square as a tuple of two integers (row, column)
+    :return: the specified square as a vector [row, column]
     """
-    column = ord(square[0]) - ord('a')
     row = 8 - int(square[1])
-    return row, column
+    column = ord(square[0]) - ord('a')
+    return np.array([row, column])
 
 
 class Chess:
