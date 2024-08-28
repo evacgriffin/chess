@@ -843,21 +843,6 @@ class Player:
             print(captured_piece)
 
 
-# TODO: Make parse_square/format_square methods on the Chess class.
-#  Parse: str -> coords
-#  Format: coords -> str
-def convert_to_tuple(square: str) -> np.array:
-    """
-    Converts a user input string with formatting 'ColRow' to a numpy vector of two integers needed for the internal
-    implementation.
-    :param square: square as a string of two characters representing 'ColRow' on the chess board
-    :return: the specified square as a vector [row, column]
-    """
-    row = 8 - int(square[1])
-    column = ord(square[0]) - ord('a')
-    return np.array([row, column])
-
-
 class Chess:
     """
     Represents a falcon-hunter chess game.
@@ -920,6 +905,27 @@ class Chess:
         """
         self._player_turn *= (-1)
 
+    def parse_square(self, square: str) -> np.array:
+        """
+        Converts a string of format 'ColRow' to a vector of two integers [row, col].
+        :param square: square as a string of two characters representing 'ColRow' on the chess board
+        :return: the specified square as a vector [row, column]
+        """
+        row = 8 - int(square[1])
+        column = ord(square[0]) - ord('a')
+        return np.array([row, column])
+
+    def format_square(self, square: np.array) -> str:
+        """
+        Converts a vector of two integers representing a square on the chess board as [row, col] to a string
+        of format 'ColRow'.
+        :param square: the specified square as a vector [row, column]
+        :return: square as a string of two characters representing 'ColRow' on the chess board
+        """
+        row_str = 8 - square[0]
+        col_str = ord('a') + square[1]  # TODO: Make getter method Board.get_start_ord
+        return str(col_str) + str(row_str)
+
     # TODO: Take in coordinates instead of square strings. Decouple the frontend and backend as much as possible.
     #  The UI should get data from the user and pass it to the engine in the format the engine understands, rather
     #  than the engine trying to understand all possible UI formats. The same is true in the reverse direction.
@@ -957,8 +963,8 @@ class Chess:
             return False
 
         # Convert input strings to tuples
-        start_square = convert_to_tuple(start_square)
-        goal_square = convert_to_tuple(goal_square)
+        start_square = self.parse_square(start_square)
+        goal_square = self.parse_square(goal_square)
 
         piece_on_start_square = self._board.get_current_piece_on_square(start_square)
         # Does start_square contain a chess piece at all?
@@ -1085,7 +1091,7 @@ class Chess:
             return False
 
         # Convert square label to tuple of integers
-        square = convert_to_tuple(square)
+        square = self.parse_square(square)
 
         piece_on_square = self._board.get_current_piece_on_square(square)
         # Does the specified square contain a chess piece already?
