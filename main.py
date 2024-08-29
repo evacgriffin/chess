@@ -46,7 +46,7 @@ def main():
 
     while game.get_game_state() == GameState.UNFINISHED:
         # Print current player
-        if game.get_player_turn() == 1:
+        if game.get_turn() % 2 == 1:
             print("White's turn!\n")
         else:
             print("Black's turn!\n")
