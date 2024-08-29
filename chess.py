@@ -872,11 +872,9 @@ class Chess:
         self._white = Player(Color.WHITE)
         self._black = Player(Color.BLACK)
 
-        # White begins per the standard rules
-        # Integer 1: White's turn, Integer -1: Black's turn
-        # This way, to switch turns, all we have to do is multiply by (-1) to flip the value
-        self._player_turn = 1
-        # TODO: Count all turns, use mod to determine current turn.
+        # White begins per standard chess rules
+        # Even integer: White's turn, odd integer: Black's turn
+        self._turn = 1
 
         # Initial game state
         # Other possible states are 'WHITE_WON' and 'BLACK_WON'
@@ -897,20 +895,19 @@ class Chess:
         """
         return self._game_state
 
-    def get_player_turn(self) -> int:
+    def get_turn(self) -> int:
         """
-        Returns the value representing which player's turn it is.
-        :return: player turn as an integer, 1 if it's White's turn, -1 if it's Black's turn
+        Returns the current turn number.
+        :return: current turn as an integer
         """
-        return self._player_turn
+        return self._turn
 
     def go_to_next_turn(self) -> None:
         """
-        Changes the current turn to the other player.
-        A value of 1 corresponds to player1 and a value of -1 corresponds to player2.
-        :return: No return value, changes self._player_turn in place
+        Increments the current turn.
+        :return: No return value, changes self._turn in place
         """
-        self._player_turn *= (-1)
+        self._turn += 1
 
     def parse_square(self, square: str) -> np.array:
         """
@@ -980,15 +977,15 @@ class Chess:
             return False
 
         # Does start_square contain a piece belonging to the current player?
-        # If color is 'black' and player_turn = 1, move is illegal
+        # If color is 'black' and player_turn is odd, move is illegal
         # TODO: Replace `_player_turn` check with a `get_turn_color()` method.
         piece_on_start_square_color = piece_on_start_square.get_color()
-        if piece_on_start_square_color == Color.BLACK and self._player_turn == 1:
+        if piece_on_start_square_color == Color.BLACK and self._turn % 2 == 1:
             print("It's white's turn! Cannot move a black chess piece.\n")
             return False
 
-        # If color is 'white' and player_turn = -1, move is illegal
-        if piece_on_start_square_color == Color.WHITE and self._player_turn == -1:
+        # If color is 'white' and player_turn is even, move is illegal
+        if piece_on_start_square_color == Color.WHITE and self._turn % 2 == 0:
             print("It's black's turn! Cannot move a white chess piece.\n")
             return False
 
@@ -1001,13 +998,13 @@ class Chess:
 
         if piece_on_goal_square:
             piece_on_goal_square_color = piece_on_goal_square.get_color()
-            # If color is 'white' and player_turn = 1, move is illegal
-            if piece_on_goal_square_color == Color.WHITE and self._player_turn == 1:
+            # If color is 'white' and player_turn is odd, move is illegal
+            if piece_on_goal_square_color == Color.WHITE and self._turn % 2 == 1:
                 print("The goal square already contains a white chess piece!\n")
                 return False
 
-            # If color is 'black' and player_turn = -1, move is illegal
-            if piece_on_goal_square_color == Color.BLACK and self._player_turn == -1:
+            # If color is 'black' and player_turn is even, move is illegal
+            if piece_on_goal_square_color == Color.BLACK and self._turn % 2 == 0:
                 print("The goal square already contains a black chess piece!\n")
                 return False
 
@@ -1072,7 +1069,7 @@ class Chess:
 
         # Obtain the list of fairy pieces available to the current player and the list
         # of previously captured pieces for that player
-        if self._player_turn == 1:
+        if self._turn % 2 == 1:
             available_fairy_pieces = self._white.get_fairy_pieces()
             captured_pieces = self._white.get_captured_pieces()
         else:
@@ -1107,7 +1104,7 @@ class Chess:
             return False
 
         # Checks for white's turn
-        if self._player_turn == 1:
+        if self._turn % 2 == 1:
             # Is the square outside of white's home ranks?
             if square_row > 2:
                 print("White cannot enter a piece outside of row 1 or row 2!\n")
@@ -1150,7 +1147,7 @@ class Chess:
         self._board.update_piece_entered(square, fairy_piece)
 
         # Remove the fairy piece from the current player's list of available fairy pieces
-        if self._player_turn == 1:
+        if self._turn % 2 == 1:
             self._white.remove_fairy_piece(fairy_piece)
         else:
             self._black.remove_fairy_piece(fairy_piece)
