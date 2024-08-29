@@ -918,8 +918,8 @@ class Chess:
         :param square: square as a string of two characters representing 'ColRow' on the chess board
         :return: the specified square as a vector [row, column]
         """
-        row = 8 - int(square[1])
-        column = ord(square[0]) - ord('a')
+        row = self._board.get_height() - int(square[1])
+        column = ord(square[0]) - self._board.get_start_ord()
         return np.array([row, column])
 
     def format_square(self, square: np.array) -> str:
@@ -929,8 +929,8 @@ class Chess:
         :param square: the specified square as a vector [row, column]
         :return: square as a string of two characters representing 'ColRow' on the chess board
         """
-        row_str = 8 - square[0]
-        col_str = ord('a') + square[1]
+        row_str = self._board.get_height() - square[0]
+        col_str = self._board.get_start_ord() + square[1]
         return str(col_str) + str(row_str)
 
     # TODO: Take in coordinates instead of square strings. Decouple the frontend and backend as much as possible.
