@@ -935,16 +935,11 @@ class Chess:
         col_str = self._board.get_start_ord() + square[1]
         return str(col_str) + str(row_str)
 
-    # TODO: Take in coordinates instead of square strings. Decouple the frontend and backend as much as possible.
-    #  The UI should get data from the user and pass it to the engine in the format the engine understands, rather
-    #  than the engine trying to understand all possible UI formats. The same is true in the reverse direction.
-    def make_move(self, start_square: str, goal_square: str) -> bool:
+    def make_move(self, start_square: np.array, goal_square: np.array) -> bool:
         """
-        Moves a piece from start_square to goal_square. Takes user entered strings as input and internally converts the
-        strings to a tuple of two integers as used by the board's layout.
-        This separates the user from the internal implementation.
-        :param start_square: the start position as a string
-        :param goal_square: the goal position as a string
+        Moves a piece from start_square to goal_square.
+        :param start_square: the start position as a vector [row, column]
+        :param goal_square: the goal position as a vector [row, column]
         :return:    Boolean:
                     False if move is illegal or game has already been won
                     True if move is legal
@@ -956,24 +951,21 @@ class Chess:
             return False
 
         # Is start_square = goal_square?
-        if start_square == goal_square:
+        if (start_square[0] == goal_square[0] and
+                start_square[1] == goal_square[1]):
             print("Moving from a square to itself is an illegal move.\n")
             return False
 
+        # TODO: Refactor into Board.is_square_on_board() method
         # Is goal_square within the bounds of the game board?
-        # Board ranges: rows [1,8], columns [a,h]
-        column = goal_square[0]
-        row = int(goal_square[1])
-        if column < 'a' or column > 'h':
+        row = goal_square[0]
+        col = goal_square[1]
+        if col < 0 or col >= self._board.get_width():
             print("Column out of bounds! Cannot move chess piece off the board.\n")
             return False
-        if row < 1 or row > self._board.get_height():
+        if row < 0 or row >= self._board.get_height():
             print("Row out of bounds! Cannot move chess piece off the board.\n")
             return False
-
-        # Convert input strings to tuples
-        start_square = self.parse_square(start_square)
-        goal_square = self.parse_square(goal_square)
 
         piece_on_start_square = self._board.get_current_piece_on_square(start_square)
         # Does start_square contain a chess piece at all?
@@ -1056,16 +1048,16 @@ class Chess:
         self.go_to_next_turn()
         return True
 
-    def enter_fairy_piece(self, piece_type: str, square: str) -> bool:
+    def enter_fairy_piece(self, piece_type: str, square: np.array) -> bool:
         """
         Enters the specified fairy piece into the game on the specified square.
         :param piece_type: fairy piece as a char
-        :param square: square to place the piece on as a string label
+        :param square: square to place the piece on as a vector [row, column]
         :return:    Boolean:
                     False if the piece is not allowed to enter this square at this turn
                     True if the piece can enter the specified square legally
         """
-        square_row = int(square[1])
+        square_row = square[0]
 
         # Is the game over?
         if self._game_state != GameState.UNFINISHED:
@@ -1099,9 +1091,6 @@ class Chess:
                 "This player cannot enter a second fairy piece since they have not lost a second major piece yet!\n")
             return False
 
-        # Convert square label to tuple of integers
-        square = self.parse_square(square)
-
         piece_on_square = self._board.get_current_piece_on_square(square)
         # Does the specified square contain a chess piece already?
         if piece_on_square:
@@ -1111,7 +1100,7 @@ class Chess:
         # Checks for white's turn
         if self._turn % 2 == 1:
             # Is the square outside of white's home ranks?
-            if square_row > 2:
+            if square_row < self._board.get_height() - 2:
                 print("White cannot enter a piece outside of row 1 or row 2!\n")
                 return False
             # Is the specified piece label consistent with being a white chess piece?
@@ -1121,7 +1110,7 @@ class Chess:
         # Checks for black's turn
         else:
             # Is the square outside of black's home ranks?
-            if square_row < 7:
+            if square_row > 1:
                 print("Black cannot enter a piece outside of row 7 or row 8!\n")
                 return False
             # Is the specified piece label consistent with being a black chess piece?

@@ -55,6 +55,7 @@ def main():
         if entering_fairy_piece == 'y':
             piece_type = input("What type of fairy piece would you like to enter? (f, F, h, H): ")
             square = input("Which square do you want to place the fairy piece on? ")
+            square = game.parse_square(square)
             game.enter_fairy_piece(piece_type, square)
         else:
             print("\nPlease make your move!\n")
@@ -62,6 +63,9 @@ def main():
         goal_square = input("Goal square: ")
 
         print(f"Moving from {start_square} to {goal_square}:\n")
+
+        start_square = game.parse_square(start_square)
+        goal_square = game.parse_square(goal_square)
 
         game.make_move(start_square, goal_square)
 
