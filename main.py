@@ -20,6 +20,7 @@
 #                   Black pieces have a lowercase label. For example, a black pawn is labeled 'p'.
 
 from chess import Chess
+from chess import GameState
 
 
 def main():
@@ -43,7 +44,7 @@ def main():
     game = Chess()
     game.print_board()
 
-    while game.get_game_state() == "UNFINISHED":
+    while game.get_game_state() == GameState.UNFINISHED:
         # Print current player
         if game.get_player_turn() == 1:
             print("White's turn!\n")
@@ -64,7 +65,7 @@ def main():
 
         game.make_move(start_square, goal_square)
 
-    if game.get_game_state() == "BLACK_WON":
+    if game.get_game_state() == GameState.BLACK_WON:
         winner = "Black"
     else:
         winner = "White"

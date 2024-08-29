@@ -22,6 +22,13 @@ class Color(Enum):
     WHITE = 2
 
 
+class GameState(Enum):
+    """Enumeration representing game states."""
+    UNFINISHED = 1
+    BLACK_WON = 2
+    WHITE_WON = 3
+
+
 class ChessPiece(ABC):
     """
     Represents a chess piece with a color and label.
@@ -876,10 +883,8 @@ class Chess:
         # Even integer: White's turn, odd integer: Black's turn
         self._turn = 1
 
-        # Initial game state
-        # Other possible states are 'WHITE_WON' and 'BLACK_WON'
-        self._game_state = "UNFINISHED"
-        # TODO: Replace game_state with an enum.
+        # Initialize game state
+        self._game_state = GameState.UNFINISHED
 
     def print_board(self) -> None:
         """
@@ -888,10 +893,10 @@ class Chess:
         """
         self._board.print()
 
-    def get_game_state(self) -> str:
+    def get_game_state(self) -> GameState:
         """
         Returns the game's current state.
-        :return: game state as a string
+        :return: game state as a GameState Enum object
         """
         return self._game_state
 
@@ -946,7 +951,7 @@ class Chess:
         """
         # Check if move is legal:
         # Is the game over?
-        if self._game_state != "UNFINISHED":
+        if self._game_state != GameState.UNFINISHED:
             print("The game is over! No more moves can be made!\n")
             return False
 
@@ -1031,11 +1036,11 @@ class Chess:
             # If the captured piece was a king, update the game state
             # If the black king was captured
             if piece_on_goal_square.get_label() == 'g':
-                self._game_state = "WHITE_WON"
+                self._game_state = GameState.WHITE_WON
                 print("White has captured Black's king! White wins the game!\n")
             # If the white king was captured
             elif piece_on_goal_square.get_label() == 'G':
-                self._game_state = "BLACK_WON"
+                self._game_state = GameState.BLACK_WON
                 print("Black has captured White's king! Black wins the game!\n")
 
         # Complete the move
@@ -1063,7 +1068,7 @@ class Chess:
         square_row = int(square[1])
 
         # Is the game over?
-        if self._game_state != "UNFINISHED":
+        if self._game_state != GameState.UNFINISHED:
             print("The game is over! No more fairy pieces can be entered!\n")
             return False
 

@@ -2,6 +2,7 @@
 
 import unittest
 from chess import Chess
+from chess import GameState
 
 
 class TestChess(unittest.TestCase):
@@ -72,7 +73,7 @@ class TestChess(unittest.TestCase):
         self.assertTrue(game.make_move('b4', 'a2'))  # Black moves a knight and captures a white pawn
         self.assertTrue(game.make_move('c7', 'e8'))  # White moves a knight and captures the black king
         self.assertFalse(game.make_move('a2', 'c1'))  # Black attempts to make a move after white already won
-        self.assertEqual(game.get_game_state(), "WHITE_WON")  # Test correct game state
+        self.assertEqual(game.get_game_state(), GameState.WHITE_WON)  # Test correct game state
 
     def test_bishop_movement(self):
         """Test bishop movement."""
@@ -97,7 +98,7 @@ class TestChess(unittest.TestCase):
         self.assertTrue(game.make_move('e6', 'f7'))  # White captures a black pawn
         self.assertTrue(game.make_move('f2', 'e1'))  # Black captures white's king
         self.assertFalse(game.make_move('f7', 'g8'))  # White attempts to make a move after black already won
-        self.assertEqual(game.get_game_state(), "BLACK_WON")  # Test correct game state
+        self.assertEqual(game.get_game_state(), GameState.BLACK_WON)  # Test correct game state
 
     def test_rook_movement(self):
         """Test rook movement."""
@@ -130,7 +131,7 @@ class TestChess(unittest.TestCase):
         self.assertTrue(game.make_move('h4', 'h3'))  # Black moves a pawn one square fwd
         self.assertTrue(game.make_move('e7', 'e8'))  # White captures black's king
         self.assertFalse(game.make_move('h3', 'h2'))  # Black attempts to make a move after white already won
-        self.assertEqual(game.get_game_state(), "WHITE_WON")  # Test correct game state
+        self.assertEqual(game.get_game_state(), GameState.WHITE_WON)  # Test correct game state
 
     def test_queen_movement(self):
         """Test queen movement."""
@@ -150,7 +151,7 @@ class TestChess(unittest.TestCase):
         self.assertTrue(game.make_move('h3', 'c8'))  # White captures a black bishop
         self.assertTrue(game.make_move('b4', 'e1'))  # Black captures white's king
         self.assertFalse(game.make_move('g2', 'g4'))  # White attempts to make a move after black already won
-        self.assertEqual(game.get_game_state(), "BLACK_WON")  # Test correct game state
+        self.assertEqual(game.get_game_state(), GameState.BLACK_WON)  # Test correct game state
 
     def test_king_movement(self):
         """Test king movement."""
@@ -173,7 +174,7 @@ class TestChess(unittest.TestCase):
         self.assertFalse(game.make_move('e5', 'e7'))  # White attempts to move their king two squares fwd
         self.assertTrue(game.make_move('e5', 'e4'))  # White captures black's king
         self.assertFalse(game.make_move('d8', 'e7'))  # Black attempts to make a move after white already won
-        self.assertEqual(game.get_game_state(), "WHITE_WON")  # Test correct game state
+        self.assertEqual(game.get_game_state(), GameState.WHITE_WON)  # Test correct game state
 
     def test_fairy_pieces(self):
         """Test entering fairy pieces and fairy piece movement."""
