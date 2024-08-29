@@ -630,6 +630,13 @@ class Board:
         """
         return self._height
 
+    def get_start_ord(self) -> int:
+        """
+        Get the Board's start column value as the character's integer value.
+        :return: Board's start column as an ASCII decimal integer value
+        """
+        return self._start_ord
+
     def get_current_piece_on_square(self, square: np.array) -> Optional[ChessPiece]:
         """
         Get the current chess piece on the specified square.
@@ -923,7 +930,7 @@ class Chess:
         :return: square as a string of two characters representing 'ColRow' on the chess board
         """
         row_str = 8 - square[0]
-        col_str = ord('a') + square[1]  # TODO: Make getter method Board.get_start_ord
+        col_str = ord('a') + square[1]
         return str(col_str) + str(row_str)
 
     # TODO: Take in coordinates instead of square strings. Decouple the frontend and backend as much as possible.
