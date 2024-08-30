@@ -476,17 +476,16 @@ class Hunter(ChessPiece):
             return False
 
         # If we are trying to move diagonally forward, the move is illegal
-        if ((self._color == Color.WHITE and goal_square[0] < start_square[0] and goal_square[1] != start_square[1]) or
-                (self._color == Color.BLACK and goal_square[0] > start_square[0]
-                 and goal_square[1] != start_square[1])):
+        if (((self._color == Color.WHITE and goal_square[0] < start_square[0]) or
+            (self._color == Color.BLACK and goal_square[0] > start_square[0])) and
+                goal_square[1] != start_square[1]):
             print("Hunters can only move straight forward!\n")
             return False
 
         # If we are trying to move straight backward, the move is illegal
-        if ((self._color == Color.WHITE and goal_square[0] > start_square[0] and
-            abs(goal_square[1] - start_square[1]) != abs(goal_square[0] - start_square[0])) or
-                (self._color == Color.BLACK and goal_square[0] < start_square[0] and
-                 abs(goal_square[1] - start_square[1]) != abs(goal_square[0] - start_square[0]))):
+        if (((self._color == Color.WHITE and goal_square[0] > start_square[0]) or
+            (self._color == Color.BLACK and goal_square[0] < start_square[0])) and
+                abs(goal_square[1] - start_square[1]) != abs(goal_square[0] - start_square[0])):
             print("Hunters can only move diagonally backward!\n")
             return False
 
