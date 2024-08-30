@@ -139,17 +139,16 @@ class Pawn(ChessPiece):
                     False if move is illegal
                     True if move is legal
         """
-        # Check movement on first turn
-        if self._first_move:
-            # Don't allow moving forward more than 2 spaces
-            if abs(goal_square[0] - start_square[0]) > 2:
-                print("Pawns cannot move more than 2 spaces forward on their first turn!\n")
-                return False
+        # Don't allow moving forward more than 2 spaces on first turn
+        if self._first_move and abs(goal_square[0] - start_square[0]) > 2:
+            print("Pawns cannot move more than 2 spaces forward on their first turn!\n")
+            return False
 
-            # Don't allow jumping over another piece
-            if goal_square[1] == start_square[1] and straight_move_requires_jump(start_square, goal_square, board):
-                print("Pawns cannot jump over other pieces.\n")
-                return False
+        # Don't allow jumping over another piece
+        if (self._first_move and goal_square[1] == start_square[1] and
+                straight_move_requires_jump(start_square, goal_square, board)):
+            print("Pawns cannot jump over other pieces.\n")
+            return False
 
         # Don't allow moving backwards or sideways
         if ((self._color == Color.WHITE and goal_square[0] > start_square[0])
