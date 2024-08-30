@@ -911,6 +911,8 @@ class Chess:
         self._white = Player(Color.WHITE)
         self._black = Player(Color.BLACK)
 
+        self._players = {Color.WHITE: self._white, Color.BLACK: self._black}
+
         # White begins per standard chess rules
         # Even integer: White's turn, odd integer: Black's turn
         self._turn = 1
@@ -1031,21 +1033,12 @@ class Chess:
 
         # If we reach this point, the proposed move is legal!
 
-        # Does goal_square contain a piece? Capture it!
-        # Add captured piece to that players list of captured pieces
-        # TODO: Collapse conditional by using a `self._players: dict[PlayerColor, Player]` structure.
-        if piece_on_goal_square and piece_on_goal_square.get_color() == Color.WHITE:
-            self._white.add_captured_piece(piece_on_goal_square)
-            print("Black captured a piece!\n")
-            print("White's captured pieces: ", end=' ')
-            for piece in self._white.get_captured_pieces():
-                print(piece.get_label(), end=' ')
-            print('\n')
-        elif piece_on_goal_square and piece_on_goal_square.get_color() == Color.BLACK:
-            self._black.add_captured_piece(piece_on_goal_square)
-            print("White captured a piece!\n")
-            print("Black's captured pieces: ", end=' ')
-            for piece in self._black.get_captured_pieces():
+        # If there is a piece on goal_square, it must be the opposite player's piece, and will be captured
+        if piece_on_goal_square:
+            self._players[piece_on_goal_square.get_color()].add_captured_piece(piece_on_goal_square)
+            print("The current player captured a piece!\n")
+            print("The opposite player's captured pieces are: ", end=' ')
+            for piece in self._players[piece_on_goal_square.get_color()].get_captured_pieces():
                 print(piece.get_label(), end=' ')
             print('\n')
 
@@ -1088,12 +1081,8 @@ class Chess:
 
         # Obtain the list of fairy pieces available to the current player and count the number of major pieces
         # the current player has lost
-        if self._turn % 2 == 1:
-            available_fairy_pieces = self._white.get_fairy_pieces()
-            num_major_pieces = self._white.count_major_pieces(self._major_pieces)
-        else:
-            available_fairy_pieces = self._black.get_fairy_pieces()
-            num_major_pieces = self._black.count_major_pieces(self._major_pieces)
+        available_fairy_pieces = self._players[self.get_turn_color()].get_fairy_pieces()
+        num_major_pieces = self._players[self.get_turn_color()].count_major_pieces(self._major_pieces)
 
         # If this is the first time the current player is trying to enter a fairy piece,
         # but they haven't lost any major pieces yet, we cannot enter the fairy piece
@@ -1112,7 +1101,7 @@ class Chess:
             return False
 
         # Checks for white's turn
-        if self._turn % 2 == 1:
+        if self.get_turn_color() == Color.WHITE:
             # Is the square outside of white's home ranks?
             if square_row < self._board.get_height() - 2:
                 print("White cannot enter a piece outside of row 1 or row 2!\n")
@@ -1137,7 +1126,7 @@ class Chess:
             print("Sorry! This player doesn't have any fairy pieces left!\n")
             return False
 
-        # If the specified piece available?
+        # Is the specified piece available?
         fairy_piece = None
         # Search the available fairy pieces for the specified piece
         for piece in available_fairy_pieces:
@@ -1155,10 +1144,7 @@ class Chess:
         self._board.update_piece_entered(square, fairy_piece)
 
         # Remove the fairy piece from the current player's list of available fairy pieces
-        if self._turn % 2 == 1:
-            self._white.remove_fairy_piece(fairy_piece)
-        else:
-            self._black.remove_fairy_piece(fairy_piece)
+        self._players[self.get_turn_color()].remove_fairy_piece(fairy_piece)
 
         # Print out the updated board and go to next turn
         self._board.print()
