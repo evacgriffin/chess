@@ -436,10 +436,8 @@ class Falcon(ChessPiece):
             print("Falcons can only move diagonally forward!\n")
             return False
 
-        # # If a proposed straight backwards move requires a jump, the move is illegal
-        if ((self._color == Color.WHITE and goal_square[0] > start_square[0]) or
-                (self._color == Color.BLACK and goal_square[0] < start_square[0]) and
-                straight_move_requires_jump(start_square, goal_square, board)):
+        # # If a proposed straight move requires a jump, the move is illegal
+        if goal_square[1] == start_square[1] and straight_move_requires_jump(start_square, goal_square, board):
             print("A falcon cannot jump over other pieces!\n")
             return False
 
