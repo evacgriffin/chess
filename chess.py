@@ -11,11 +11,6 @@ from typing import Optional
 import numpy as np
 
 
-class InvalidColorError(Exception):
-    """User-defined exception for invalid chess piece color."""
-    pass
-
-
 class Color(Enum):
     """Enumeration representing valid chess piece colors."""
     BLACK = 1
