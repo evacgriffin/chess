@@ -1086,16 +1086,13 @@ class Chess:
             print("The game is over! No more fairy pieces can be entered!\n")
             return False
 
-        # Obtain the list of fairy pieces available to the current player and the list
-        # of previously captured pieces for that player
-        # Count the number of major pieces the current player has lost
+        # Obtain the list of fairy pieces available to the current player and count the number of major pieces
+        # the current player has lost
         if self._turn % 2 == 1:
             available_fairy_pieces = self._white.get_fairy_pieces()
-            captured_pieces = self._white.get_captured_pieces()
             num_major_pieces = self._white.count_major_pieces(self._major_pieces)
         else:
             available_fairy_pieces = self._black.get_fairy_pieces()
-            captured_pieces = self._black.get_captured_pieces()
             num_major_pieces = self._black.count_major_pieces(self._major_pieces)
 
         # If this is the first time the current player is trying to enter a fairy piece,
