@@ -652,6 +652,22 @@ class Board:
         """
         return self._layout[square[0]][square[1]]
 
+    def square_on_board(self, square: np.array) -> bool:
+        """
+        Determines if the specified square lies within the bounds of the game board.
+        :param square: square as a vector [row, column]
+        :return:    Boolean:
+                    True if square lies within the bounds of the board
+                    False otherwise
+        """
+        if square[0] < 0 or square[0] >= self.get_height():
+            return False
+
+        if square[1] < 0 or square[1] >= self.get_width():
+            return False
+
+        return True
+
     def print(self) -> None:
         """
         Prints out the current layout of the board.
@@ -956,15 +972,9 @@ class Chess:
             print("Moving from a square to itself is an illegal move.\n")
             return False
 
-        # TODO: Refactor into Board.is_square_on_board() method
         # Is goal_square within the bounds of the game board?
-        row = goal_square[0]
-        col = goal_square[1]
-        if col < 0 or col >= self._board.get_width():
-            print("Column out of bounds! Cannot move chess piece off the board.\n")
-            return False
-        if row < 0 or row >= self._board.get_height():
-            print("Row out of bounds! Cannot move chess piece off the board.\n")
+        if not self._board.square_on_board(goal_square):
+            print("Goal square is out of bounds! Cannot move chess piece off the board.\n")
             return False
 
         piece_on_start_square = self._board.get_current_piece_on_square(start_square)
