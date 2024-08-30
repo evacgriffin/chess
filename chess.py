@@ -872,6 +872,19 @@ class Player:
         for captured_piece in self._captured_pieces:
             print(captured_piece)
 
+    def count_major_pieces(self, major_pieces: list) -> int:
+        """
+        Counts how many of the player's major pieces have been captured.
+        :param major_pieces: list of characters, representing labels for pieces that are considered major pieces
+        :return: number of major pieces in player's captured pieces as an integer
+        """
+        count = 0
+        for piece in self._captured_pieces:
+            if piece.get_label().lower() in major_pieces:
+                count += 1
+
+        return count
+
 
 class Chess:
     """
@@ -890,6 +903,9 @@ class Chess:
         """
         # Initialize the board.
         self._board = Board()
+
+        # Initialize list of major pieces: Queen, Rook, Bishop, King are considered major pieces
+        self._major_pieces = ['q', 'r', 'b', 'k']
 
         # Initialize the two players.
         self._white = Player(Color.WHITE)
@@ -1072,20 +1088,15 @@ class Chess:
 
         # Obtain the list of fairy pieces available to the current player and the list
         # of previously captured pieces for that player
+        # Count the number of major pieces the current player has lost
         if self._turn % 2 == 1:
             available_fairy_pieces = self._white.get_fairy_pieces()
             captured_pieces = self._white.get_captured_pieces()
+            num_major_pieces = self._white.count_major_pieces(self._major_pieces)
         else:
             available_fairy_pieces = self._black.get_fairy_pieces()
             captured_pieces = self._black.get_captured_pieces()
-
-        # Count the number of major pieces the current player has lost
-        # TODO: Refactor into a `Player.count_major_pieces()` method.
-        major_piece_labels = ['q', 'r', 'b', 'k']
-        num_major_pieces = 0
-        for piece in captured_pieces:
-            if piece.get_label().lower() in major_piece_labels:
-                num_major_pieces += 1
+            num_major_pieces = self._black.count_major_pieces(self._major_pieces)
 
         # If this is the first time the current player is trying to enter a fairy piece,
         # but they haven't lost any major pieces yet, we cannot enter the fairy piece
