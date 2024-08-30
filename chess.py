@@ -417,17 +417,16 @@ class Falcon(ChessPiece):
             return False
 
         # If we are trying to move backwards, but not within the same column, the move is illegal
-        if ((self._color == Color.WHITE and goal_square[0] > start_square[0] and goal_square[1] != start_square[1]) or
-                (self._color == Color.BLACK and goal_square[0] < start_square[0]
-                 and goal_square[1] != start_square[1])):
+        if (((self._color == Color.WHITE and goal_square[0] > start_square[0]) or
+                (self._color == Color.BLACK and goal_square[0] < start_square[0])) and
+                goal_square[1] != start_square[1]):
             print("Falcons can only move straight backwards!\n")
             return False
 
         # If we are trying to move forward, but not on a diagonal, the move is illegal
-        if ((self._color == Color.WHITE and goal_square[0] < start_square[0]
-             and abs(goal_square[1] - start_square[1]) != abs(goal_square[0] - start_square[0]))
-                or (self._color == Color.BLACK and goal_square[0] > start_square[0] and
-                    abs(goal_square[1] - start_square[1]) != abs(goal_square[0] - start_square[0]))):
+        if (((self._color == Color.WHITE and goal_square[0] < start_square[0]) or
+                (self._color == Color.BLACK and goal_square[0] > start_square[0])) and
+                abs(goal_square[1] - start_square[1]) != abs(goal_square[0] - start_square[0])):
             print("Falcons can only move diagonally forward!\n")
             return False
 
