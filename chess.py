@@ -36,6 +36,7 @@ class ChessPiece(ABC):
     type of chess piece).
     Has various child classes for each type of chess piece.
     """
+
     def __init__(self, color: Color, label: str) -> None:
         """
         Creates a new ChessPiece object with the specified color and label.
@@ -104,6 +105,7 @@ class Pawn(ChessPiece):
     Inherits from ChessPiece.
     Communicates with the Board class to check for opposing chess pieces in diagonal forward directions.
     """
+
     def __init__(self, color: Color) -> None:
         """
         Creates a new Pawn object with the specified color and label.
@@ -194,6 +196,7 @@ class Knight(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
+
     def __init__(self, color: Color) -> None:
         """
         Creates a new Knight object with the specified color and label.
@@ -232,6 +235,7 @@ class Bishop(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
+
     def __init__(self, color: Color) -> None:
         """
         Creates a new Bishop object with the specified color and label.
@@ -271,6 +275,7 @@ class Rook(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
+
     def __init__(self, color: Color) -> None:
         """
         Creates a new Rook object with the specified color and label.
@@ -310,6 +315,7 @@ class Queen(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
+
     def __init__(self, color: Color) -> None:
         """
         Creates a new Queen object with the specified color and label.
@@ -356,6 +362,7 @@ class King(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
+
     def __init__(self, color: Color) -> None:
         """
         Creates a new King object with the specified color and label.
@@ -390,6 +397,7 @@ class Falcon(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
+
     def __init__(self, color: Color) -> None:
         """
         Creates a new Falcon object with the specified color and label.
@@ -413,73 +421,35 @@ class Falcon(ChessPiece):
             print("Falcons cannot move straight left or right!\n")
             return False
 
-        # Checks for white pieces
-        if self._color == Color.WHITE:
-            # If we are trying to move backwards, but not within the same column, the move is illegal
-            if goal_square[0] > start_square[0] and goal_square[1] != start_square[1]:
-                print("Falcons can only move straight backwards!\n")
-                return False
+        # If we are trying to move backwards, but not within the same column, the move is illegal
+        if ((self._color == Color.WHITE and goal_square[0] > start_square[0] and goal_square[1] != start_square[1]) or
+                (self._color == Color.BLACK and goal_square[0] < start_square[0]
+                 and goal_square[1] != start_square[1])):
+            print("Falcons can only move straight backwards!\n")
+            return False
 
-            # If we are trying to move forward, but not on a diagonal, the move is illegal
-            if (goal_square[0] < start_square[0] and
-                    abs(goal_square[1] - start_square[1]) != abs(goal_square[0] - start_square[0])):
-                print("Falcons can only move diagonally forward!\n")
-                return False
+        # If we are trying to move forward, but not on a diagonal, the move is illegal
+        if ((self._color == Color.WHITE and goal_square[0] < start_square[0]
+             and abs(goal_square[1] - start_square[1]) != abs(goal_square[0] - start_square[0]))
+                or (self._color == Color.BLACK and goal_square[0] > start_square[0] and
+                    abs(goal_square[1] - start_square[1]) != abs(goal_square[0] - start_square[0]))):
+            print("Falcons can only move diagonally forward!\n")
+            return False
 
-            # If we are trying to move backwards, we must check for jumps in that direction
-            if goal_square[0] > start_square[0]:
-                # If a proposed straight move requires a jump, the move is illegal
-                if straight_move_requires_jump(start_square, goal_square, board):
-                    print("A falcon cannot jump over other pieces!\n")
-                    return False
+        # # If a proposed straight backwards move requires a jump, the move is illegal
+        if ((self._color == Color.WHITE and goal_square[0] > start_square[0]) or
+                (self._color == Color.BLACK and goal_square[0] < start_square[0]) and
+                straight_move_requires_jump(start_square, goal_square, board)):
+            print("A falcon cannot jump over other pieces!\n")
+            return False
 
-                # Otherwise, no jumps are required and the proposed move is legal
-                return True
+        # If a proposed diagonal move requires a jump, the move is illegal
+        if diagonal_move_requires_jump(start_square, goal_square, board):
+            print("A falcon cannot jump over other pieces!\n")
+            return False
 
-            # If we are trying to move diagonally, we must check for jumps in that direction
-            # If a proposed diagonal move requires a jump, the move is illegal
-            if diagonal_move_requires_jump(start_square, goal_square, board):
-                print("A falcon cannot jump over other pieces!\n")
-                return False
-
-            # Otherwise, no jumps are required and the proposed move is legal
-            return True
-
-        # Checks for black pieces
-        if self._color == Color.BLACK:
-            # If we are trying to move backwards, but not within the same column, the move is illegal
-            if goal_square[0] < start_square[0] and goal_square[1] != start_square[1]:
-                print("Falcons can only move straight backwards!\n")
-                return False
-
-            # If we are trying to move forward, but not on a diagonal, the move is illegal
-            if (goal_square[0] > start_square[0] and
-                    abs(goal_square[1] - start_square[1]) != abs(goal_square[0] - start_square[0])):
-                print("Falcons can only move diagonally forward!\n")
-                return False
-
-            # If we are trying to move backwards, we must check for jumps in that direction
-            if goal_square[0] < start_square[0]:
-                # If a proposed straight move requires a jump, the move is illegal
-                if straight_move_requires_jump(start_square, goal_square, board):
-                    print("A falcon cannot jump over other pieces!\n")
-                    return False
-
-                # Otherwise, no jumps are required and the proposed move is legal
-                return True
-
-            # If we are trying to move diagonally, we must check for jumps in that direction
-            if goal_square[0] > start_square[0]:
-                # If a proposed diagonal move requires a jump, the move is illegal
-                if diagonal_move_requires_jump(start_square, goal_square, board):
-                    print("A falcon cannot jump over other pieces!\n")
-                    return False
-
-                # Otherwise, no jumps are required and the proposed move is legal
-                return True
-
-        # If we get to this point, the chess piece color is invalid
-        raise InvalidColorError("This is not a valid chess piece color.")
+        # Otherwise, the proposed move is legal
+        return True
 
 
 class Hunter(ChessPiece):
@@ -489,6 +459,7 @@ class Hunter(ChessPiece):
     Not responsible for checking other movement conditions. These checks are done by Chess instead.
     Inherits from ChessPiece.
     """
+
     def __init__(self, color: Color) -> None:
         """
         Creates a new Hunter object with the specified color and label.
@@ -896,6 +867,7 @@ class Chess:
     track of the two players, and the ChessPiece class (and its various child classes) to verify if moves are legal
     according to a piece's moveset.
     """
+
     def __init__(self) -> None:
         """
         Creates a new chess game object.
