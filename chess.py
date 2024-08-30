@@ -923,6 +923,18 @@ class Chess:
         """
         return self._turn
 
+    def get_turn_color(self) -> Color:
+        """
+        Returns current turn's player color.
+        :return: current turn's player color as a Color Enum object
+        """
+        # If current turn is odd, it is white's turn
+        if self._turn % 2 == 1:
+            return Color.WHITE
+
+        # Otherwise, it is black's turn
+        return Color.BLACK
+
     def go_to_next_turn(self) -> None:
         """
         Increments the current turn.
@@ -986,17 +998,9 @@ class Chess:
             print("The specified start square does not contain a chess piece. Move cannot be completed.\n")
             return False
 
-        # Does start_square contain a piece belonging to the current player?
-        # If color is 'black' and player_turn is odd, move is illegal
-        # TODO: Replace `_player_turn` check with a `get_turn_color()` method.
-        piece_on_start_square_color = piece_on_start_square.get_color()
-        if piece_on_start_square_color == Color.BLACK and self._turn % 2 == 1:
-            print("It's white's turn! Cannot move a black chess piece.\n")
-            return False
-
-        # If color is 'white' and player_turn is even, move is illegal
-        if piece_on_start_square_color == Color.WHITE and self._turn % 2 == 0:
-            print("It's black's turn! Cannot move a white chess piece.\n")
+        # Check if start_square contains a piece from the opposite player
+        if piece_on_start_square.get_color() != self.get_turn_color():
+            print("It's the other player's turn. Move cannot be completed.\n")
             return False
 
         # Is the proposed move legal for this type of ChessPiece?
@@ -1005,50 +1009,39 @@ class Chess:
 
         # Does goal_square contain a piece from the current player?
         piece_on_goal_square = self._board.get_current_piece_on_square(goal_square)
+        if piece_on_goal_square and piece_on_goal_square.get_color() == self.get_turn_color():
+            print("The goal square already contains a piece from the current player. Move cannot be completed.\n")
+            return False
 
-        if piece_on_goal_square:
-            piece_on_goal_square_color = piece_on_goal_square.get_color()
-            # If color is 'white' and player_turn is odd, move is illegal
-            if piece_on_goal_square_color == Color.WHITE and self._turn % 2 == 1:
-                print("The goal square already contains a white chess piece!\n")
-                return False
+        # If we reach this point, the proposed move is legal!
 
-            # If color is 'black' and player_turn is even, move is illegal
-            if piece_on_goal_square_color == Color.BLACK and self._turn % 2 == 0:
-                print("The goal square already contains a black chess piece!\n")
-                return False
+        # Does goal_square contain a piece? Capture it!
+        # Add captured piece to that players list of captured pieces
+        # TODO: Collapse conditional by using a `self._players: dict[PlayerColor, Player]` structure.
+        if piece_on_goal_square and piece_on_goal_square.get_color() == Color.WHITE:
+            self._white.add_captured_piece(piece_on_goal_square)
+            print("Black captured a piece!\n")
+            print("White's captured pieces: ", end=' ')
+            for piece in self._white.get_captured_pieces():
+                print(piece.get_label(), end=' ')
+            print('\n')
+        elif piece_on_goal_square and piece_on_goal_square.get_color() == Color.BLACK:
+            self._black.add_captured_piece(piece_on_goal_square)
+            print("White captured a piece!\n")
+            print("Black's captured pieces: ", end=' ')
+            for piece in self._black.get_captured_pieces():
+                print(piece.get_label(), end=' ')
+            print('\n')
 
-            # If we reach this point, the proposed move is legal!
+        # If the captured piece was a king, update the game state
+        if piece_on_goal_square and piece_on_goal_square.get_label() == 'g':
+            self._game_state = GameState.WHITE_WON
+            print("White has captured Black's king! White wins the game!\n")
+        elif piece_on_goal_square and piece_on_goal_square.get_label() == 'G':
+            self._game_state = GameState.BLACK_WON
+            print("Black has captured White's king! Black wins the game!\n")
 
-            # Does goal_square contain a piece? Capture it!
-            # Add captured piece to that players list of captured pieces
-            # TODO: Collapse conditional by using a `self._players: dict[PlayerColor, Player]` structure.
-            if piece_on_goal_square_color == Color.WHITE:
-                self._white.add_captured_piece(piece_on_goal_square)
-                print("Black captured a piece!\n")
-                print("White's captured pieces: ", end=' ')
-                for piece in self._white.get_captured_pieces():
-                    print(piece.get_label(), end=' ')
-                print('\n')
-            elif piece_on_goal_square_color == Color.BLACK:
-                self._black.add_captured_piece(piece_on_goal_square)
-                print("White captured a piece!\n")
-                print("Black's captured pieces: ", end=' ')
-                for piece in self._black.get_captured_pieces():
-                    print(piece.get_label(), end=' ')
-                print('\n')
-
-            # If the captured piece was a king, update the game state
-            # If the black king was captured
-            if piece_on_goal_square.get_label() == 'g':
-                self._game_state = GameState.WHITE_WON
-                print("White has captured Black's king! White wins the game!\n")
-            # If the white king was captured
-            elif piece_on_goal_square.get_label() == 'G':
-                self._game_state = GameState.BLACK_WON
-                print("Black has captured White's king! Black wins the game!\n")
-
-        # Complete the move
+        # Complete move on the board
         self._board.update_move(start_square, goal_square, piece_on_start_square)
 
         # If the moved piece was a pawn, and it was the pawn's first turn, flip
