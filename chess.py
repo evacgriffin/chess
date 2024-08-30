@@ -966,15 +966,18 @@ class Chess:
             print("The game is over! No more moves can be made!\n")
             return False
 
-        # Is start_square = goal_square?
-        if (start_square[0] == goal_square[0] and
-                start_square[1] == goal_square[1]):
-            print("Moving from a square to itself is an illegal move.\n")
+        # Are start_square and goal_square within the bounds of the game board?
+        if not self._board.square_on_board(start_square):
+            print("Invalid start square. Start square is out of bounds!\n")
             return False
 
-        # Is goal_square within the bounds of the game board?
         if not self._board.square_on_board(goal_square):
             print("Goal square is out of bounds! Cannot move chess piece off the board.\n")
+            return False
+
+        # Is start_square = goal_square?
+        if start_square[0] == goal_square[0] and start_square[1] == goal_square[1]:
+            print("Moving from a square to itself is an illegal move.\n")
             return False
 
         piece_on_start_square = self._board.get_current_piece_on_square(start_square)
