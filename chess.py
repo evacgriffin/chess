@@ -24,6 +24,12 @@ class GameState(Enum):
     WHITE_WON = 3
 
 
+# class UiCallbacks(ABC):
+#     @abstractmethod
+#     def handle_victory(self, color: Color):
+#         pass
+
+
 class ChessPiece(ABC):
     """
     Represents a chess piece with a color and label.
@@ -70,6 +76,7 @@ class ChessPiece(ABC):
         """
         pass
 
+    # TODO: Replace this with handle_move.
     def negate_first_move_flag(self):
         """
         Negates the value of _first_move. Overridden in child classes with this member.
@@ -330,8 +337,9 @@ class Queen(ChessPiece):
                     True if move is legal
         """
         # We must check that we move either diagonally or straight up/down/left/right
-        if ((abs(goal_square[1] - start_square[1]) != abs(goal_square[0] - start_square[0])) and
-                goal_square[1] != start_square[1] and goal_square[0] != start_square[0]):
+        distance = goal_square - start_square
+        abs_dist = abs(distance)
+        if abs_dist[0] != abs_dist[1] and np.array_equal(goal_square, start_square):
             print("A queen can only move diagonally, or straight up, down, left or right!\n")
             return False
 
@@ -656,8 +664,10 @@ def traveling_on_axis_requires_jump(start_square: np.array, goal_square: np.arra
                 False if move doesn't require a jump
     """
     current_square = start_square + axis
+    # TODO: use square on board
     while 0 < current_square[0] < board.get_height() or 0 < current_square[1] < board.get_width():
         # If we reach the goal square, the move did not require any jumps
+        # TODO: np.array_equal
         if current_square[0] == goal_square[0] and current_square[1] == goal_square[1]:
             return False
 
@@ -679,6 +689,7 @@ def diagonal_move_requires_jump(start_square: np.array, goal_square: np.array, b
                 True if the move requires a jump
                 False if move doesn't require a jump
     """
+    # TODO: dot product
     # Bottom right direction
     if goal_square[0] > start_square[0] and goal_square[1] > start_square[1]:
         return traveling_on_axis_requires_jump(start_square, goal_square, board, np.array([1, 1]))
@@ -798,12 +809,7 @@ class Player:
         :param major_pieces: list of characters, representing labels for pieces that are considered major pieces
         :return: number of major pieces in player's captured pieces as an integer
         """
-        count = 0
-        for piece in self._captured_pieces:
-            if piece.get_label().lower() in major_pieces:
-                count += 1
-
-        return count
+        return sum(1 for piece in self._captured_pieces if piece.get_label().lower() in major_pieces)
 
 
 class Chess:
@@ -867,12 +873,7 @@ class Chess:
         Returns current turn's player color.
         :return: current turn's player color as a Color Enum object
         """
-        # If current turn is odd, it is white's turn
-        if self._turn % 2 == 1:
-            return Color.WHITE
-
-        # Otherwise, it is black's turn
-        return Color.BLACK
+        return Color.WHITE if self._turn % 2 == 1 else Color.BLACK
 
     def go_to_next_turn(self) -> None:
         """
@@ -1011,8 +1012,7 @@ class Chess:
             print("This player cannot enter a fairy piece since they have not lost any major pieces yet!\n")
             return False
         elif len(available_fairy_pieces) == 1 and num_major_pieces == 1:
-            print(
-                "This player cannot enter a second fairy piece since they have not lost a second major piece yet!\n")
+            print("This player cannot enter a second fairy piece since they have not lost a second major piece yet!\n")
             return False
 
         piece_on_square = self._board.get_current_piece_on_square(square)
