@@ -24,7 +24,10 @@ class GameState(Enum):
     WHITE_WON = 3
 
 
+# Future work to make it easy to add a GUI:
+# Interface to use instead of all the print statements
 # class UiCallbacks(ABC):
+#     Includes an abstract method for every interaction between game and UI.
 #     @abstractmethod
 #     def handle_victory(self, color: Color):
 #         pass
@@ -66,21 +69,12 @@ class ChessPiece(ABC):
         """
         return self._label
 
-    def get_first_move(self) -> bool:
+    def handle_move(self, start_square: np.array, goal_square: np.array) -> None:
         """
-        Returns the piece's first_move value, specifying whether it is the piece's first move.
-        Overridden in child classes that have this data member.
-        :return:    Boolean:
-                    True if it is the piece's first move
-                    False otherwise
-        """
-        pass
-
-    # TODO: Replace this with handle_move.
-    def negate_first_move_flag(self):
-        """
-        Negates the value of _first_move. Overridden in child classes with this member.
-        :return: No return value, the data member is changed in place.
+        Reacts to the piece being moved from the given start square to the given goal square.
+        :param start_square: the start position as a vector [row, column]
+        :param goal_square: the goal position as a vector [row, column]
+        :return: No return value
         """
         pass
 
@@ -116,21 +110,16 @@ class Pawn(ChessPiece):
         super().__init__(color, 'p')
         self._first_move = True  # Whether this is the pawn's first move
 
-    def get_first_move(self) -> bool:
+    def handle_move(self, start_square: np.array, goal_square: np.array) -> None:
         """
-        Returns the pawn's first_move value, specifying whether it is the pawn's first move.
-        :return:    Boolean:
-                    True if it is the pawn's first move
-                    False otherwise
+        Reacts to the pawn being moved from the given start square to the given goal square.
+        :param start_square: the start position as a vector [row, column]
+        :param goal_square: the goal position as a vector [row, column]
+        :return: No return value
         """
-        return self._first_move
-
-    def negate_first_move_flag(self):
-        """
-        Negates the value of the _first_move private member.
-        :return: No return value, the data member is changed in place.
-        """
-        self._first_move = not self._first_move
+        # If this is the pawn's first move, set first_move flag to False
+        if self._first_move:
+            self._first_move = False
 
     def move_legal(self, start_square: np.array, goal_square: np.array, board: "Board") -> bool:
         """
@@ -685,7 +674,6 @@ def diagonal_move_requires_jump(start_square: np.array, goal_square: np.array, b
                 True if the move requires a jump
                 False if move doesn't require a jump
     """
-    # TODO: dot product
     # Bottom right direction
     if goal_square[0] > start_square[0] and goal_square[1] > start_square[1]:
         return traveling_on_axis_requires_jump(start_square, goal_square, board, np.array([1, 1]))
@@ -973,8 +961,8 @@ class Chess:
 
         # If the moved piece was a pawn, and it was the pawn's first turn, flip
         # the first_move flag
-        if piece_on_start_square.get_label().lower() == 'p' and piece_on_start_square.get_first_move():
-            piece_on_start_square.negate_first_move_flag()
+        if piece_on_start_square.get_label().lower() == 'p':
+            piece_on_start_square.handle_move(start_square, goal_square)
 
         # Print out the updated board and go to next turn
         self._board.print()
