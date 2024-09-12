@@ -664,19 +664,15 @@ def traveling_on_axis_requires_jump(start_square: np.array, goal_square: np.arra
                 False if move doesn't require a jump
     """
     current_square = start_square + axis
-    # TODO: use square on board
-    while 0 < current_square[0] < board.get_height() or 0 < current_square[1] < board.get_width():
-        # If we reach the goal square, the move did not require any jumps
-        # TODO: np.array_equal
-        if current_square[0] == goal_square[0] and current_square[1] == goal_square[1]:
-            return False
-
+    while not np.array_equal(current_square, goal_square):
         # If we encounter another piece, the move requires a jump
-        current_square_tuple = int(current_square[0]), int(current_square[1])
-        if board.get_current_piece_on_square(current_square_tuple):
+        if board.get_current_piece_on_square(current_square):
             return True
 
         current_square += axis
+
+    # If we reach the goal square, the move did not require any jumps
+    return False
 
 
 def diagonal_move_requires_jump(start_square: np.array, goal_square: np.array, board: Board) -> bool:
