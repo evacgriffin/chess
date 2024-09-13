@@ -5,8 +5,7 @@
 - [Description](#description)
 - [Installation](#installation)
 - [Usage](#usage)
-- [Features](#features)
-- [Contributing](#contributing)
+- [Featured Design Principles](#featured-design-principles)
 - [License](#license)
 - [Roadmap](#roadmap)
 
@@ -15,6 +14,10 @@
 In this text-based Falcon-Hunter Console Chess game, two players take turns to make moves on a chess board in a race to 
 capture the opponent's king. The game is played entirely in the terminal. After each move, feedback and an updated view 
 of the chess board are printed to the console.
+
+![Game introduction](assets/chess_intro.png)
+![White moves a piece](assets/chess_demo1.png)
+![Black moves a piece](assets/chess_demo2.png)
 
 ## Installation
 
@@ -40,15 +43,17 @@ using Python 3.11 or newer.
 
 ## Usage
 
-## Features
+## Featured Design Principles
 
-- 
-
-## Contributing
+- Object-oriented design
+- Separation of concerns
+- Unit testing
+- Type hinting
+- Detailed doc strings and comments
 
 ## License
 
-This project is licensed under the MIT License. See the LICENSE file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Roadmap
 
