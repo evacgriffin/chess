@@ -12,10 +12,8 @@
 ## Description
 
 In this text-based Falcon-Hunter Console Chess game, two players take turns to make moves on a chess board in a race to 
-capture the opponent's king. The game is played entirely in the terminal. After each move, feedback and an updated view 
-of the chess board are printed to the console.
-
-### Demo:
+capture the opponent's king. Players can enter powerful falcon and hunter chess pieces to defeat their opponent.
+The game is played entirely in the terminal.
 
 <img src="assets/chess_intro.png" alt="Game introduction">
 <img src="assets/chess_demo1.png" alt="Demo white moves a piece" height="500">
