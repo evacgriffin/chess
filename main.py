@@ -24,7 +24,7 @@ from chess import GameState
 
 
 def main():
-    print("Welcome to ChessVar, a falcon-hunter chess game!\n")
+    print("Welcome to falcon-hunter console chess!\n")
     print("Please enter squares in the following format: ColumnRow. Examples: a3, f8, h5.")
     print("White and black chess pieces are represented by upper-case and lower-case letters respectively "
           "(for example, 'P' for white pawn and 'b' for black bishop).\n")
@@ -32,7 +32,7 @@ def main():
     print("Hunters move forward like a rook (straight) and backward like a bishop (diagonally).")
     print("Falcons move forward like a bishop (diagonally) and backward like a rook (straight).")
     print("A player may enter their first fairy piece on any turn after they have lost at least one major piece "
-          "(queen, bishop, knight, or rook). A player may enter their second fairy piece on any turn after they have "
+          "(queen, bishop, knight, or rook).\nA player may enter their second fairy piece on any turn after they have "
           "lost at least a second major piece.")
     print("Fairy pieces may only be entered on a square in one of the player's two home ranks.")
     print("Entering a fairy piece counts as the player's full turn.")
