@@ -18,8 +18,8 @@ of the chess board are printed to the console.
 ### Demo:
 
 <img src="assets/chess_intro.png" alt="Game introduction">
-<img src="assets/chess_demo1.png" alt="Demo white moves a piece" width="400" height="600">
-<img src="assets/chess_demo2.png" alt="Demo black moves a piece" width="400" height="600">
+<img src="assets/chess_demo1.png" alt="Demo white moves a piece" height="500">
+<img src="assets/chess_demo2.png" alt="Demo black moves a piece" height="650">
 
 ## Installation
 
