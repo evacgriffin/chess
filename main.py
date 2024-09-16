@@ -52,6 +52,7 @@ def main():
             print("Black's turn!\n")
 
         entering_fairy_piece = input("Would you like to enter a fairy piece? (y/n): ")
+        # TODO: Check if player can enter a piece before asking other questions
         if entering_fairy_piece == 'y':
             piece_type = input("What type of fairy piece would you like to enter? (f, F, h, H): ")
             square = input("Which square do you want to place the fairy piece on? ")
