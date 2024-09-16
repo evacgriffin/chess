@@ -78,6 +78,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Roadmap
 
+- [ ] Rotate board for current player view    
 - [ ] Design and implement GUI
 - [ ] Port to be playable online
 - [ ] Add different game modes
